@@ -18,7 +18,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.normpath(os.path.join(HERE, '..'))             #工程根目录 ecg_fpga/
 sys.path.insert(0, os.path.join(ROOT, 'src', 'ps'))           #添加hw_filter_ref库路径
 
-import hw_filter_ref as hw   # 滤波器参考
+import hw_filter_ref as hw   # type: ignore # 滤波器参考
 
 
 # 路径全部相对工程根目录推算，换电脑、换盘符、从任何目录启动都不用改
