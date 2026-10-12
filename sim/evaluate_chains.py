@@ -146,7 +146,7 @@ def main():
         dict(k=8, q=30.0, n=63),
     ]
     for c in cands:
-        y = hw.chain_hw(raw, k=c['k'], notch_q=c['q'], n_taps=c['n'])
+        y = hw.chain_hw(raw, k=c['k'], notch_q=c['q'], n_taps=c['n'])     #候选测试
         rows.append(evaluate(
             f"③ 硬件链 k={c['k']} Q={c['q']:g} FIR={c['n']}",
             y, ref, n_multipliers(c['n']),
