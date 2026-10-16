@@ -116,29 +116,49 @@ def evaluate(name, y, ref, n_mult, extra=''):
                 n_mult=n_mult, extra=extra)
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 def main():
-    raw = load_raw(RAW)                                                              #加载数据
-    print(f'实测数据：{len(raw)} 点 = {len(raw)/FS:.1f} 秒')
+    raw = load_raw(RAW)                                                              #加载数据 原始数据
+    print(f'实测数据：{len(raw)} 点 = {len(raw)/FS:.1f} 秒')                          #原始数据信息
     print(f'原始码范围 [{raw.min():.0f}, {raw.max():.0f}]，'
           f'均值 {raw.mean():.0f}（= 直流失调 {raw.mean()*LSB_MV:.2f} mV）')
     print(f'原始 50Hz 幅度 {hw.tone_amplitude(raw, 50.0)*LSB_MV*1000:.1f} µV\n')
 
+
+
+
+
+
+#计算滤波指标，比较滤波参数
     # ── 移位位数对应的截止频率 ──
     print('直流阻断的移位位数 k 与截止频率：')
     for k in (6, 7, 8, 9):
-        print(f'  k={k}  →  fc = {hw.dc_block_fc(k):.3f} Hz'
+        print(f'  k={k}  →  fc = {hw.dc_block_fc(k):.3f} Hz'           #对比不同K和截止频率的关系
               f'{"   ← 最接近原来的 0.5Hz" if k == 7 else ""}')
     print()
 
     # ── 参考：双向零相移（硬件做不到，只作上限）──
     ref = hw.chain_orig_zerophase(raw)                        #巴特沃斯带通 + 陷波
 
-    rows = [evaluate('① 原版 双向零相移 sosfiltfilt', ref, None, np.nan,'硬件做不到，仅作上限参考')]                        #双向 巴特沃斯带通 + 陷波(对比参考的指标计算)
-    rows.append(evaluate('② 原版结构 改单向 sosfilt',hw.chain_orig_causal(raw), ref, np.nan,'只去掉反向滤，结构不变'))      #单向 巴特沃斯带通 + 陷波(对比参考的指标计算)
+    rows = [evaluate('① 原版 双向零相移 sosfiltfilt', ref, None, np.nan,'硬件做不到，仅作上限参考')]                        #双向 巴特沃斯带通 + 陷波(对比参考的指标)
+    rows.append(evaluate('② 原版结构 改单向 sosfilt',hw.chain_orig_causal(raw), ref, np.nan,'只去掉反向滤，结构不变'))      #单向 巴特沃斯带通 + 陷波(对比参考的指标)
 
     # ── 硬件候选 ──
     cands = [
-        dict(k=7, q=30.0, n=31),
+        dict(k=7, q=30.0, n=31),               #参数组合列表
         dict(k=8, q=30.0, n=31),
         dict(k=7, q=15.0, n=31),
         dict(k=8, q=15.0, n=31),
@@ -146,7 +166,7 @@ def main():
         dict(k=8, q=30.0, n=63),
     ]
     for c in cands:
-        y = hw.chain_hw(raw, k=c['k'], notch_q=c['q'], n_taps=c['n'])     #候选测试
+        y = hw.chain_hw(raw, k=c['k'], notch_q=c['q'], n_taps=c['n'])     #候选组合测试通过完整硬件滤波链路滤波后，指标计算
         rows.append(evaluate(
             f"③ 硬件链 k={c['k']} Q={c['q']:g} FIR={c['n']}",
             y, ref, n_multipliers(c['n']),
@@ -155,12 +175,12 @@ def main():
 
     # ── 打表 ──
     print('=' * 124)
-    print(f"{'链路':<34}{'残留直流':>10}{'QRS':>8}{'心率':>7}{'心拍':>5}"
+    print(f"{'链路':<34}{'残留直流':>10}{'QRS':>8}{'心率':>7}{'心拍':>5}"      #终端表头
           f"{'延迟':>7}{'心拍形态':>10}{'全局r':>8}{'乘法':>6}")
-    print(f"{'':<34}{'mV':>10}{'mV':>8}{'BPM':>7}{'个':>5}"
+    print(f"{'':<34}{'mV':>10}{'mV':>8}{'BPM':>7}{'个':>5}"                   #表头单位
           f"{'ms':>7}{'相关':>10}{'(失效)':>8}{'个':>6}")
     print('-' * 124)
-    for d in rows:
+    for d in rows:                                                            #展示指标
         nm = '--' if np.isnan(d['n_mult']) else f"{d['n_mult']:.0f}"
         print(f"{d['name']:<34}{d['dc']:>10.3f}"
               f"{d['qrs']:>8.3f}{d['bpm']:>7.1f}{d['n_beat']:>5d}"
@@ -168,57 +188,85 @@ def main():
     print('=' * 124)
     for d in rows:
         if d['extra']:
-            print(f"  {d['name']}：{d['extra']}")
+            print(f"  {d['name']}：{d['extra']}")                              #打印每种滤波方案的备注信息
     print()
 
+
+
+
+
     # ── 模型推理一致性 ──
-    check_inference(raw, ref)
+    check_inference(raw, ref)                   #输入原始数据、双向零相移参考数据，比较模型对滤波效果的分类
+
+
+
+
+
+
 
 
 def check_inference(raw, ref):
-    """同一段数据，分别用零相移参考链和硬件链预处理，看模型判读是否一致。
-    这是端到端的验收：滤波结构改了，最终结论不能变。"""
-    try:
+    """
+    同一段数据，分别用零相移参考链和硬件链预处理，看模型判读是否一致。
+    这是端到端的验收：滤波结构改了，最终结论不能变。
+    """
+
+    try:                                                              #检查是否安装onnxruntime库
         import onnxruntime as ort
     except ImportError:
         print('（没装 onnxruntime，跳过推理一致性检查）')
         return
     from scipy import signal as sg
 
-    sess = ort.InferenceSession(MODEL, providers=['CPUExecutionProvider'])
-    inp = sess.get_inputs()[0].name
-    classes = [l.strip() for l in open(CLASSES, encoding='utf-8') if l.strip()]
+
+#读取模型基本信息
+    sess = ort.InferenceSession(MODEL, providers=['CPUExecutionProvider'])       #读取深度学习模型文件，设置计算方式
+    inp = sess.get_inputs()[0].name                                              #读取模型数据输入口的名称（不同的输入数据对应不同的输入口，模型只有一种输入固定使用第[0]个）
+    classes = [l.strip() for l in open(CLASSES, encoding='utf-8') if l.strip()]  #读取分类结果类型表
+
 
     def infer(x_500):
-        x = sg.resample_poly(x_500, 18, 25)          # 500 → 360 Hz
-        if len(x) != 3600:
+        """
+        输入波形数据
+        预处理
+        模型计算
+        输出分类结果和概率
+        """
+        x = sg.resample_poly(x_500, 18, 25)          # 500 → 360 Hz 重采样
+        if len(x) != 3600:                           #统一数据长度
             x = np.resize(x, 3600)
-        x = (x - x.mean()) / (x.std() + 1e-8)
-        lo = sess.run(None, {inp: x.reshape(1, 1, 3600).astype(np.float32)})[0][0]
+        x = (x - x.mean()) / (x.std() + 1e-8)        #归一化
+        lo = sess.run(None, {inp: x.reshape(1, 1, 3600).astype(np.float32)})[0][0]   #模型计算
         e = np.exp(lo - lo.max())
-        p = e / e.sum()
+        p = e / e.sum()                           #计算分类概率
         k = int(np.argmax(p))
-        return classes[k], float(p[k])
+        return classes[k], float(p[k])            #输出分类结果
 
-    hw_y = hw.chain_hw(raw, k=8, notch_q=30.0, n_taps=31)
+
+    hw_y = hw.chain_hw(raw, k=8, notch_q=30.0, n_taps=31)                 #完整硬件滤波链路滤波
+
 
     print('模型推理一致性（10 秒不重叠窗口，跳过前 2 秒瞬态）：')
-    print(f"{'窗口':<6}{'零相移参考':>20}{'硬件链 k=8 Q=30 FIR=31':>28}{'一致':>6}")
+    print(f"{'窗口':<6}{'零相移参考':>20}{'硬件链 k=8 Q=30 FIR=31':>28}{'一致':>6}")  #打表
     print('-' * 62)
+
     same = 0
     total = 0
     start = 2 * FS
-    while start + 10 * FS <= len(raw):
-        a = infer(ref[start:start + 10 * FS])
-        b = infer(hw_y[start:start + 10 * FS])
-        ok = a[0] == b[0]
-        same += ok
-        total += 1
-        print(f'{total:<6}{a[0]+" "+f"{a[1]*100:.1f}%":>20}'
+    while start + 10 * FS <= len(raw):                                    #10秒循环窗口
+        a = infer(ref[start:start + 10 * FS])                             #截取原始数据
+        b = infer(hw_y[start:start + 10 * FS])                            #截取参考数据
+        ok = a[0] == b[0]                                                 #比较模型分类结果
+        same += ok                                                        #统计分类结果一致的窗口数
+        total += 1                                                        #统计总窗口数
+        print(f'{total:<6}{a[0]+" "+f"{a[1]*100:.1f}%":>20}'              #输出全部分类比较结果
               f'{b[0]+" "+f"{b[1]*100:.1f}%":>28}{"√" if ok else "×":>6}')
-        start += 10 * FS
+        start += 10 * FS                                                  #移动窗口
     print('-' * 62)
-    print(f'一致 {same}/{total}')
+    print(f'一致 {same}/{total}')                                         #完全一致的窗口数比例
 
 
-main()
+
+
+
+main()      #执行主函数
