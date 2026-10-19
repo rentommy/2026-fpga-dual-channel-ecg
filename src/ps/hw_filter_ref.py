@@ -125,9 +125,13 @@ def fir_group_delay(n_taps):                                        #计算FIR�
 # ══════════════════════════════════════════════════════════════════
 #  完整硬件滤波链路
 # ══════════════════════════════════════════════════════════════════
-def chain_hw(x, k=7, notch_q=30.0, n_taps=31, fs=FS):
-    y = dc_block_shift(np.asarray(x, dtype=np.float64), k)
-    b, a = notch_coef(50.0, notch_q, fs)  
+def chain_hw(x, k=7, notch_q=30.0, n_taps=31, fs=FS, stages=1):
+    """
+    stages连级数 默认 1，保持与之前的候选对比结果完全一致；
+    定稿用 stages=2（见 src/hls/ecg_filter_coef.h 的 DC_STAGES）
+    """
+    y = dc_block_cascade(x, k, stages)
+    b, a = notch_coef(50.0, notch_q, fs)
     y = notch_apply(y, b, a)
     h = fir_lowpass(n_taps, 40.0, fs)
     y = fir_apply(y, h)
@@ -229,3 +233,87 @@ def heart_rate(peaks, fs=FS):
     rr = np.diff(peaks) / fs
     rr = rr[(rr > 0.25) & (rr < 2.5)]
     return float(60.0 / np.median(rr)) if len(rr) else np.nan
+
+
+
+
+
+
+
+
+
+# ══════════════════════════════════════════════════════════════════
+#  ①′ 直流阻断（定稿版）：温和高通 + 矩形窗基线估计 + 延迟补偿
+#
+#  和 ① 的级联移位高通比，差别只在"基线怎么估"：
+#    级联移位：一阶 IIR 估基线，群延迟随频率变 11 倍（0.05~1 Hz 内 22~249 点），
+#              一个固定延迟量对不齐，残余相位把 T 波削掉一半
+#    矩形窗  ：群延迟恒为 (L-1)/2，所有频率一次对齐
+#
+#  L 必须取到接近一个心拍（实测 RR 824/878 ms）。窗比一拍短的话窗里装着
+#  QRS 和 T 波本身，会把基线估计顶高，减完造成 ST 系统性读低
+#  —— L=256(512ms) 实测偏差 -0.068 mV，L=320(640ms) 降到 -0.028 mV。
+#
+#  硬件代价：一条滑动求和（加一次减一次）+ 一次常数乘法（归一化 1/L）
+#            + 一条 L 深的历史 RAM + 一条 D 深的延迟线
+# ══════════════════════════════════════════════════════════════════
+def boxcar_lp(x, L):
+    """
+    计算基线
+
+    矩形窗滑动平均
+    硬件里不做 L 次加法，而是维护一个滑动和：
+        sum += x[n] - x[n-L]
+        lp   = sum / L
+    每点只要一次加、一次减、一次乘（乘 1/L 的定点常数）
+    """
+    x = np.asarray(x, dtype=np.float64)
+    c = np.cumsum(np.concatenate([[0.0], x]))
+    out = np.empty(len(x), dtype=np.float64)
+    for n in range(len(x)):
+        a = max(0, n + 1 - L)
+        out[n] = (c[n + 1] - c[a]) / L   # 固定除以 L —— 硬件的历史 RAM 清零启动，
+    #                                      窗没填满时等于拿 0 去补，没有除法器可以按实际点数平均。
+    #                                      前 L 个点因此是无效输出，上板丢弃（ECG_WARMUP）
+    return out
+
+
+def dc_block_boxcar(x, k_g=8, L=320, D=159):
+    """
+    定稿直流阻断
+
+        acc += (x - acc) >> k_g        温和高通，fc = fs/(2π·2^k_g) = 0.311 Hz
+        yg   = x - acc                 只去直流和极慢漂移，心电频段几乎不动
+        lp   = boxcar(yg, L)           估计 yg 里剩下的漂移，滞后恒为 (L-1)/2
+        y    = yg[n-D] - lp[n]         把信号延迟 D 点，和 lp 的滞后对上
+
+    D 是**每通道可配**的：D=(L-1)/2 时低频对齐最准（诊断通路），
+    D=0 时无额外延迟但相位不补（低延迟通路，给肌电一类闭环场景用）。
+    """
+    yg = dc_block_shift(np.asarray(x, dtype=np.float64), k_g)                 #直流阻断
+    lp = boxcar_lp(yg, L)                                                     #计算基线
+    ygd = np.concatenate([np.zeros(D), yg[:len(yg) - D]]) if D else yg        #延迟对齐
+    return ygd - lp                                                           #去掉基线漂移
+
+
+def dc_block_boxcar_delay(D, n_taps=31):                                      #计算信号延迟
+    """
+    整条链的总延迟（采样点）：延迟线 D + FIR 群延迟
+
+    不收 L —— 矩形窗那 (L-1)/2 的滞后在**被减掉的那一支**上，不在信号通路上。
+    它只决定 D 该取多少，不往总延迟上再加一笔：L 从 320 换到 512、D 不变时，
+    实测总延迟一点不动（都是 174 点）。
+    陷波器也没算：它在 10 Hz 以下群延迟只有 0.11 点，相对 174 点可忽略。
+    """
+    return D + fir_group_delay(n_taps)
+
+
+def chain_hw_v2(x, k_g=8, L=320, D=159, notch_q=15.0, n_taps=31, fs=FS):      #理论完整滤波链路
+    """
+    定稿硬件链：矩形窗直流阻断 → 50Hz 陷波 → 31 抽头 FIR 低通
+    参数默认值与 src/hls/ecg_filter_coef.h 一致
+    """
+    y = dc_block_boxcar(x, k_g, L, D)
+    b, a = notch_coef(50.0, notch_q, fs)
+    y = notch_apply(y, b, a)
+    return fir_apply(y, fir_lowpass(n_taps, 40.0, fs))

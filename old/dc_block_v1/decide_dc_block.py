@@ -18,7 +18,7 @@ from scipy import signal
 
 sys.stdout.reconfigure(encoding='utf-8')
 HERE = os.path.dirname(os.path.abspath(__file__))
-ROOT = os.path.normpath(os.path.join(HERE, '..'))   # 工程根目录 ecg_fpga/
+ROOT = os.path.normpath(os.path.join(HERE, '..', '..'))   # 工程根目录 ecg_fpga/
 sys.path.insert(0, os.path.join(ROOT, 'src', 'ps'))
 
 import hw_filter_ref as hw   # noqa: E402

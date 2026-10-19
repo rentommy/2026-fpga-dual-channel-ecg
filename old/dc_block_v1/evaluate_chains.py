@@ -15,10 +15,10 @@ import numpy as np
 
 sys.stdout.reconfigure(encoding='utf-8')                      #设置输出编码
 HERE = os.path.dirname(os.path.abspath(__file__))
-ROOT = os.path.normpath(os.path.join(HERE, '..'))             #工程根目录 ecg_fpga/
+ROOT = os.path.normpath(os.path.join(HERE, '..', '..'))             #工程根目录 ecg_fpga/
 sys.path.insert(0, os.path.join(ROOT, 'src', 'ps'))           #添加hw_filter_ref库路径
 
-import hw_filter_ref as hw   # 滤波器参考
+import hw_filter_ref as hw   # 滤波器参考函数
 
 
 # 路径全部相对工程根目录推算，换电脑、换盘符、从任何目录启动都不用改
@@ -164,11 +164,14 @@ def main():
         dict(k=8, q=15.0, n=31),
         dict(k=8, q=30.0, n=15),
         dict(k=8, q=30.0, n=63),
+        dict(k=7, q=15.0, n=31, s=2),          #定稿组合：直流阻断 2 级
     ]
     for c in cands:
-        y = hw.chain_hw(raw, k=c['k'], notch_q=c['q'], n_taps=c['n'])     #候选组合测试通过完整硬件滤波链路滤波后，指标计算
+        s = c.get('s', 1)                                                 #未写 s 的按单级算，保持原有六行结果不变
+        y = hw.chain_hw(raw, k=c['k'], notch_q=c['q'], n_taps=c['n'], stages=s)     #候选组合测试通过完整硬件滤波链路滤波后，指标计算
         rows.append(evaluate(
-            f"③ 硬件链 k={c['k']} Q={c['q']:g} FIR={c['n']}",
+            f"③ 硬件链 k={c['k']} Q={c['q']:g} FIR={c['n']}"
+            f"{'' if s == 1 else f' ×{s}级 ←定稿'}",
             y, ref, n_multipliers(c['n']),
             f"FIR群延迟 {hw.fir_group_delay(c['n'])} 点 "
             f"= {hw.fir_group_delay(c['n'])/FS*1000:.0f} ms"))
@@ -243,11 +246,15 @@ def check_inference(raw, ref):
         return classes[k], float(p[k])            #输出分类结果
 
 
-    hw_y = hw.chain_hw(raw, k=8, notch_q=30.0, n_taps=31)                 #完整硬件滤波链路滤波
+    # 定稿参数，与 src/hls/ecg_filter_coef.h 一致（DC_SHIFT / DC_STAGES / Q / FIR_TAPS）
+    FIN_K, FIN_STAGES, FIN_Q, FIN_N = 7, 2, 15.0, 31
+    hw_y = hw.chain_hw(raw, k=FIN_K, notch_q=FIN_Q,
+                       n_taps=FIN_N, stages=FIN_STAGES)                   #完整硬件滤波链路滤波
 
+    lbl = f'硬件链 k={FIN_K}×{FIN_STAGES}级 Q={FIN_Q:g} FIR={FIN_N}'      #标签由参数算出，不会和实际跑的配置脱节
 
     print('模型推理一致性（10 秒不重叠窗口，跳过前 2 秒瞬态）：')
-    print(f"{'窗口':<6}{'零相移参考':>20}{'硬件链 k=8 Q=30 FIR=31':>28}{'一致':>6}")  #打表
+    print(f"{'窗口':<6}{'零相移参考':>20}{lbl:>28}{'一致':>6}")  #打表
     print('-' * 62)
 
     same = 0
