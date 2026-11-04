@@ -1,0 +1,2 @@
+上排： 3.3V   GND   SCLK    DOUT    DIN     CS
+下排： 3.3V   GND   空置    RESET   START   DRDY

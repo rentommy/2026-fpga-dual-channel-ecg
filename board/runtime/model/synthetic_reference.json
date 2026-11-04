@@ -1,0 +1,14 @@
+{
+  "source": "seeded synthetic model inputs; not ECG accuracy evidence",
+  "classes": [
+    "A",
+    "F",
+    "L",
+    "N",
+    "R",
+    "S",
+    "V",
+    "|"
+  ],
+  "samples": 4
+}

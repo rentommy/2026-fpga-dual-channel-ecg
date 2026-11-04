@@ -1,0 +1,16 @@
+{
+  "kind": "gru",
+  "classes": [
+    "A",
+    "F",
+    "L",
+    "N",
+    "R",
+    "V",
+    "|"
+  ],
+  "parameters": 19543,
+  "protocol_sha256": "5c31a24e1875e3c93e3bb1a8f4e583c0188710d07beb7c8a39e028d6fd71f10b",
+  "code_sha256": "bd464418aa446c9c0bb0222becca1cbe3d659ee7c5764bedb2080ab9db41ca06",
+  "model_sha256": "1d076ffb4f189a5c476cc5eb20d6f43ac020cd0ac01cf714630a26305d8df031"
+}

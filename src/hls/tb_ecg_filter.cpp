@@ -4,7 +4,7 @@
 //       任何一项不达标就返回非 0 退出码（CI / Vitis C-SIM 据此判定失败）。
 //
 // 五项检查：
-//   ① 实测 60 秒数据 vs 黄金参考（诊断通路）
+//   ① 合成测试 60 秒数据 vs 黄金参考（诊断通路）
 //   ② 单位冲激响应 vs 黄金参考 —— 抓系数装反、装错、折叠写错
 //   ③ 50Hz 纯音抑制 —— 抓陷波器没生效
 //   ④ 各级中间量峰值 vs 契约声称的位宽 —— 抓位宽声明不成立
@@ -88,7 +88,7 @@ static Diff compare(const std::vector<ecg_sample_t> &dut,
 
 
 // ── 判定阈值 ──
-// 来源：量化误差的理论上界 + 首次实测留 3 倍余量，见 src/hls/INTERFACE.md §5
+// 来源：量化误差的理论上界 + 首次合成测试留 3 倍余量，见 src/hls/INTERFACE.md §5
 #define TOL_MAX_LSB     64.0      // 单点最大偏差
 #define TOL_RMS_LSB     8.0       // 全段 RMS 偏差
 #define TOL_50HZ_CODE   64.0      // 50Hz 纯音残留
@@ -116,8 +116,8 @@ int main()
         return 1;
     }
 
-    // ── ① 实测数据 vs 黄金参考（诊断通路 = path 0）──
-    printf("① 实测 %zu 点（%.1f 秒）vs 黄金参考，跳过热身 %d 点\n",
+    // ── ① 合成测试数据 vs 黄金参考（诊断通路 = path 0）──
+    printf("① 合成测试 %zu 点（%.1f 秒）vs 黄金参考，跳过热身 %d 点\n",
            raw.size(), raw.size() / (double)ECG_FS, ECG_WARMUP);
     std::vector<std::vector<ecg_sample_t> > out;
     ecg_range_t rng;
@@ -166,8 +166,8 @@ int main()
 
     // ── ④ 位宽声明核对 ──
     // 契约声称各级中间量 24 位够用、累加器 48 位够用。
-    // 这里拿实测峰值去核对，而不是靠人眼看波形
-    printf("\n④ 位宽声明核对（实测峰值 vs 契约声称）\n");
+    // 这里拿合成测试峰值去核对，而不是靠人眼看波形
+    printf("\n④ 位宽声明核对（合成测试峰值 vs 契约声称）\n");
     struct { const char *name; ecg_acc_t peak; int bits; } chk[] = {
         { "温和高通输出 yg",   rng.max_abs_yg,       DATA_BITS      },
         { "矩形窗滑动和",      rng.max_abs_boxsum,   DC_BOX_ACC_BITS},

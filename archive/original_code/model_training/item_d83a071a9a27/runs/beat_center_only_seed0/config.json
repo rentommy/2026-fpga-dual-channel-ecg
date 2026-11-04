@@ -1,0 +1,68 @@
+{
+  "classes": [
+    "A",
+    "B",
+    "F",
+    "L",
+    "N",
+    "R",
+    "S",
+    "V",
+    "|"
+  ],
+  "center_only": true,
+  "seed": 0,
+  "epochs": 30,
+  "batch_size": 512,
+  "normal_cap_per_train_record": 3000,
+  "parameters": 75833,
+  "torch": "2.7.1+cu128",
+  "device": "cuda",
+  "manifest_sha256": "3fa6f2060f2b82472c5be3a667740da799fdc2d78232a135f1ce1a11fecb4e70",
+  "code_sha256": "144822b144e051e2ec1a7990bf8fefc8f1f25a704928b2197d74db7d915246f2",
+  "model_sha256": "7a50ff53744fed6f68e45181bcfde944794dc2bced3590b827765b63f40b2453",
+  "rr_mean": [
+    -0.28101903200149536,
+    -0.23719683289527893,
+    0.9799448847770691,
+    1.024008870124817,
+    0.9888232350349426,
+    -0.24440816044807434,
+    0.4899933934211731,
+    -0.25018593668937683
+  ],
+  "rr_std": [
+    0.3908679187297821,
+    0.34069696068763733,
+    0.1800224930047989,
+    0.2083677351474762,
+    0.27040615677833557,
+    0.3141437768936157,
+    0.0625675842165947,
+    0.33310672640800476
+  ],
+  "train_counts": [
+    1978,
+    54723,
+    1078,
+    4611,
+    197959,
+    3749,
+    1189,
+    23013,
+    10531
+  ],
+  "class_weights": [
+    1.5003329319979346,
+    0.35669771861432664,
+    1.5003329319979346,
+    1.2288184391602666,
+    0.18754161649974183,
+    1.3627856771241917,
+    1.5003329319979346,
+    0.5500455582058065,
+    0.8131121944018636
+  ],
+  "protocol": "annotation-timed offline candidate classification; record-isolated",
+  "selection": "validation macro-F1 over validation-supported classes; patience 8; no test access until final checkpoint selected"
+}

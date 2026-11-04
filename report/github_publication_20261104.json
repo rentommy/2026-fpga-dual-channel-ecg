@@ -1,0 +1,9 @@
+{
+  "date": "2026-11-04",
+  "repository": "https://github.com/rentommy/2026-fpga-dual-channel-ecg",
+  "paths": "ASCII English filenames; original document languages retained",
+  "excluded_reference_project": "ECG-with-Deep-learning-master",
+  "personal_raw_ecg": "excluded from new tree; prior remote commit history not rewritten",
+  "source_snapshot": "ecg_fpga_complete_20261104 plus current technical report, posters and hardware figures",
+  "new_bit_board_test": "not_run"
+}

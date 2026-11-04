@@ -1,0 +1,21 @@
+{
+  "folder": "D:\\ecg_fpga\\submission\\github_publish_20261104",
+  "full_clean_hls_to_bit_rebuild": "pass",
+  "host_release_checks": "pass",
+  "source_archive_files": 1433,
+  "excluded_learning_reference": {
+    "original_path": "模型训练/项目复现/ECG-with-Deep-learning-master",
+    "files": 16,
+    "reason": "User specified third-party learning/reproduction project; excluded from delivery, originals retained"
+  },
+  "rar_created": true,
+  "new_bit_board_test": "not_run",
+  "limit_bytes": 200000000,
+  "rar_filename": "ecg_fpga_complete_20261104.rar",
+  "publication_documents": [
+    "docs/technical_report_zh.docx",
+    "docs/posters/amd_poster_en.pptx",
+    "docs/posters/amd_poster_zh.pptx"
+  ],
+  "rar_is_previous_snapshot": true
+}

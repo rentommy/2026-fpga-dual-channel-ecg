@@ -1,0 +1,18 @@
+{
+  "date": "2026-11-04",
+  "tools": "Vivado/Vitis 2026.1",
+  "full_clean_hls_to_bit_rebuild": "pass",
+  "prior_ip_or_xpr_copied": false,
+  "prior_bit_or_hwh_copied": false,
+  "timing": {
+    "wns_ns": 0.016,
+    "whs_ns": 0.002,
+    "setup_failing_endpoints": 0,
+    "hold_failing_endpoints": 0,
+    "passed": true
+  },
+  "bitstream_generation_drc_errors": 0,
+  "new_bit_board_test": "not_run",
+  "source_archive_files": 1433,
+  "excluded_reference_files": 16
+}

@@ -1,0 +1,3 @@
+DUAL_VIEW_PASS: independent FAST/DIAG banks, split mapping, vertical-blank switching and single-view return
+ECG_IO_RTL_PASS: decoupled AXI, backpressure, mode1 SPI, FIFO, sign extension, overflow, invalid frames, buttons
+SCOPE_VIDEO_RTL_PASS: two 307200-pixel frames, sync, CH2 FAST HOLD bank selection

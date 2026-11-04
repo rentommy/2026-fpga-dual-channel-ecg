@@ -1,0 +1,35 @@
+{
+  "passed": true,
+  "checks": [
+    {
+      "arm": "two_db",
+      "seed": 0,
+      "selection_predictions_reproduced": true
+    },
+    {
+      "arm": "two_db",
+      "seed": 1,
+      "selection_predictions_reproduced": true
+    },
+    {
+      "arm": "two_db",
+      "seed": 2,
+      "selection_predictions_reproduced": true
+    },
+    {
+      "arm": "six_db",
+      "seed": 0,
+      "selection_predictions_reproduced": true
+    },
+    {
+      "arm": "six_db",
+      "seed": 1,
+      "selection_predictions_reproduced": true
+    },
+    {
+      "arm": "six_db",
+      "seed": 2,
+      "selection_predictions_reproduced": true
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "epochs": 60,
+  "seed": 0,
+  "n_weight": 0.7,
+  "batch_size": 256,
+  "lr": 0.001,
+  "patience": 10,
+  "device": "cuda",
+  "torch": "2.7.1+cu128",
+  "gpu": "NVIDIA GeForce RTX 5070 Laptop GPU",
+  "classes": [
+    "A",
+    "B",
+    "L",
+    "N",
+    "R",
+    "V",
+    "|"
+  ],
+  "split_sha256": "8e20683ad19f26412191d389f5fc78875bfae187ddc396b6cc97d2b1697987a5",
+  "manifest_sha256": "d89a92cf42218254ad3672dc792b847858635022046be51a109c3ad67067027e",
+  "model_sha256": "caccd5d1074d0d1993184674fa7e30ccbdf202efd62093178a1983365536f142",
+  "pipeline_sha256": "39a315a7c06ec9d95695dc929efa7e68f961ad494a79f327a45881aa7a01979e",
+  "python": "3.12.7"
+}

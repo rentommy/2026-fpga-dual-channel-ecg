@@ -50,7 +50,7 @@ void ecg_range_init(ecg_range_t *r)
 
 static inline void track(ecg_acc_t *slot, ecg_acc_t v)
 {
-    ecg_acc_t a = (v < 0) ? -v : v;
+    ecg_acc_t a = (v < 0) ? (ecg_acc_t)(-v) : v;
     if (a > *slot) *slot = a;
 }
 

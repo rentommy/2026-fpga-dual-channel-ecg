@@ -1,0 +1,7 @@
+{
+  "passed": true,
+  "files": 1643,
+  "total_bytes": 71005652,
+  "issues": [],
+  "scope": "Filename, size, obvious credential literals and Python syntax only; not full reproducibility, legal clearance or clinical validation"
+}

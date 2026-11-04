@@ -1,0 +1,25 @@
+{
+  "classes": [
+    "A",
+    "F",
+    "L",
+    "N",
+    "R",
+    "V",
+    "|"
+  ],
+  "seed0_grid": [
+    "baseline_mit",
+    "multi_mit",
+    "template_mit",
+    "baseline_mixed",
+    "multi_mixed",
+    "template_mixed"
+  ],
+  "selection": "MIT val macro-F1 only, repeat baseline_mit and seed0 winner seeds1/2; do not select best seed",
+  "epochs": 30,
+  "patience": 7,
+  "loss": "sqrt inverse frequency weighted CE capped12, same policy for all arms",
+  "test": "old MIT test unused; INCART test and entire SVDB untouched until final selection",
+  "scope": "seven-class direct comparison; SVDB S never relabeled A; no S training in this version"
+}

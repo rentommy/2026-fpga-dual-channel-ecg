@@ -1,0 +1,12 @@
+{
+  "rate_low_bpm": 50,
+  "rate_high_bpm": 120,
+  "rate_hold_seconds": 10,
+  "recovery_seconds": 5,
+  "quality_recovery_seconds": 1.5,
+  "model_probability": 0.9,
+  "model_consecutive_beats": 3,
+  "model_alert_seconds": 8,
+  "max_result_age_seconds": 4,
+  "note": "Engineering demonstration thresholds, configurable; not validated diagnostic limits. Poor signal and stale results suppress rate/classification alerts."
+}

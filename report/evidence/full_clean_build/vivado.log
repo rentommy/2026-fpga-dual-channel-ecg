@@ -1,0 +1,1847 @@
+INFO: [Common 17-3922] A valid Vivado Design Suite BASIC license has been detected. Your current license is active and will expire on 30-sep-2027.
+#-----------------------------------------------------------
+# Vivado v2026.1 (64-bit)
+# SW Build 6511674 on Tue Jun 16 11:02:23 MDT 2026
+# IP Build 6504888 on Tue Jun 09 09:05:25 MDT 2026
+# SharedData Build 6501428 on Mon Jun 08 17:34:18 MDT 2026
+# Start of session at: Wed Nov  4 16:58:12 2026
+# Process ID         : 18768
+# Current directory  : D:/ecg_fpga/build/full_clean_20261104_run1
+# Command line       : vivado.exe -mode batch -source board/build_system.tcl -log build/logs/vivado.log -journal build/logs/vivado.jou
+# Log file           : D:/ecg_fpga/build/full_clean_20261104_run1/build/logs/vivado.log
+# Journal file       : D:/ecg_fpga/build/full_clean_20261104_run1\build/logs/vivado.jou
+# Running On         : LAPTOP-V960FPLV
+# Platform           : Windows 11
+# Operating System   : 26200
+# Processor Detail   : AMD Ryzen 9 8945HX with Radeon Graphics        
+# CPU Frequency      : 2495 MHz
+# CPU Physical cores : 16
+# CPU Logical cores  : 32
+# Host memory        : 33605 MB
+# Swap memory        : 25769 MB
+# Total Virtual      : 59375 MB
+# Available Virtual  : 11145 MB
+#-----------------------------------------------------------
+source board/build_system.tcl
+# set root [file normalize [file join [file dirname [info script]] ..]]
+# source [file join $root board create_scope.tcl]
+## set ecg_root [file normalize [file join [file dirname [info script]] ..]]
+## set_param board.repoPaths [list [file join $ecg_root board board_files]]
+## set ecg_project_dir [file join $ecg_root build vivado ecg_scope]
+## if {[file exists [file join $ecg_project_dir ecg_overlay.xpr]]} {
+##  open_project [file join $ecg_project_dir ecg_overlay.xpr]
+##  open_bd_design [get_files */ecg_system.bd]
+##  if {[llength [get_bd_cells -quiet ecg_io]]} {error "Scope design already exists; open/rebuild that project instead."}
+## } else {source [file join $ecg_root board create_overlay.tcl]}
+### set ecg_root [file normalize [file join [file dirname [info script]] ..]]
+### if {![info exists ecg_project_dir]} {
+###     set ecg_project_dir [file join $ecg_root build vivado ecg_overlay]
+### }
+### set ecg_ip_dir [file join $ecg_root hls_ecg2 hls impl ip]
+### if {[file exists [file join $ecg_project_dir ecg_overlay.xpr]]} {
+###     error "Project already exists: $ecg_project_dir. Open it instead of overwriting it."
+### }
+### if {![file exists [file join $ecg_ip_dir component.xml]]} {
+###     error "Export the HLS IP first: $ecg_ip_dir/component.xml is missing."
+### }
+### set_param board.repoPaths [list [file join $ecg_root board board_files]]
+### set ecg_board_part [get_board_parts -quiet tul.com.tw:pynq-z2:part0:1.0]
+### if {[llength $ecg_board_part] != 1} { error "PYNQ-Z2 vendor board files were not discovered." }
+### create_project ecg_overlay $ecg_project_dir -part xc7z020clg400-1
+create_project: Time (s): cpu = 00:00:01 ; elapsed = 00:00:11 . Memory (MB): peak = 587.406 ; gain = 26.883
+### set_property board_part $ecg_board_part [current_project]
+### set_property target_language Verilog [current_project]
+### set_property ip_repo_paths [list $ecg_ip_dir] [current_project]
+### update_ip_catalog
+INFO: [IP_Flow 19-234] Refreshing IP repositories
+INFO: [IP_Flow 19-1700] Loaded user IP repository 'd:/ecg_fpga/build/full_clean_20261104_run1/hls_ecg2/hls/impl/ip'.
+INFO: [IP_Flow 19-2313] Loaded Vivado IP repository 'D:/AMDDesignTools/2026.1/Vivado/data/ip'.
+### create_bd_design ecg_system
+Wrote  : <D:\ecg_fpga\build\full_clean_20261104_run1\build\vivado\ecg_scope\ecg_overlay.srcs\sources_1\bd\ecg_system\ecg_system.bd> 
+### set ecg_ps [create_bd_cell -type ip -vlnv xilinx.com:ip:processing_system7:5.5 ps7]
+### apply_bd_automation -rule xilinx.com:bd_rule:processing_system7 \
+###     -config {make_external "FIXED_IO, DDR" apply_board_preset "1" Master "Disable" Slave "Disable"} $ecg_ps
+### set_property -dict [list CONFIG.PCW_USE_M_AXI_GP0 {1} \
+###     CONFIG.PCW_USE_S_AXI_HP0 {1} CONFIG.PCW_USE_S_AXI_HP1 {1} \
+###     CONFIG.PCW_FPGA0_PERIPHERAL_FREQMHZ {100}] $ecg_ps
+CRITICAL WARNING: [PSU-1]  Parameter : PCW_UIPARAM_DDR_DQS_TO_CLK_DELAY_0 has negative value -0.051 . PS DDR interfaces might fail when entering negative DQS skew values. 
+CRITICAL WARNING: [PSU-2]  Parameter : PCW_UIPARAM_DDR_DQS_TO_CLK_DELAY_1 has negative value -0.006 . PS DDR interfaces might fail when entering negative DQS skew values. 
+CRITICAL WARNING: [PSU-3]  Parameter : PCW_UIPARAM_DDR_DQS_TO_CLK_DELAY_2 has negative value -0.009 . PS DDR interfaces might fail when entering negative DQS skew values. 
+CRITICAL WARNING: [PSU-4]  Parameter : PCW_UIPARAM_DDR_DQS_TO_CLK_DELAY_3 has negative value -0.033 . PS DDR interfaces might fail when entering negative DQS skew values. 
+### set ecg_filter [create_bd_cell -type ip -vlnv nuaa:ecg:ecg_filter_top:1.0 ecg_filter_0]
+### foreach ecg_name {ctrl_connect read_connect write_connect} {
+###     set ecg_sc [create_bd_cell -type ip -vlnv xilinx.com:ip:smartconnect:1.0 $ecg_name]
+###     set_property -dict [list CONFIG.NUM_SI {1} CONFIG.NUM_MI {1}] $ecg_sc
+### }
+### create_bd_cell -type ip -vlnv xilinx.com:ip:proc_sys_reset:5.0 reset_100m
+INFO: [Ipptcl 7-1463] No Compatible Board Interface found. Board Tab not created in customize GUI
+### set_property CONFIG.C_AUX_RESET_HIGH {1} [get_bd_cells reset_100m]
+### create_bd_cell -type ip -vlnv xilinx.com:ip:xlconstant:1.1 const_one
+INFO: [BD 5-1043] It is recommended to use inline hdl version xilinx.com:inline_hdl:ilconstant:1.0 for the IP type xilinx.com:ip:xlconstant:1.1 for improved performance and reduced disk space. IPs with VLNV xilinx.com:ip:xlconstant:1.1 will not be supported from release 2025.2. More information on inline hdl IP is available in UG994 
+### set_property CONFIG.CONST_VAL {1} [get_bd_cells const_one]
+### create_bd_cell -type ip -vlnv xilinx.com:ip:xlconstant:1.1 const_zero
+INFO: [BD 5-1043] It is recommended to use inline hdl version xilinx.com:inline_hdl:ilconstant:1.0 for the IP type xilinx.com:ip:xlconstant:1.1 for improved performance and reduced disk space. IPs with VLNV xilinx.com:ip:xlconstant:1.1 will not be supported from release 2025.2. More information on inline hdl IP is available in UG994 
+### set_property CONFIG.CONST_VAL {0} [get_bd_cells const_zero]
+### connect_bd_intf_net [get_bd_intf_pins ps7/M_AXI_GP0] [get_bd_intf_pins ctrl_connect/S00_AXI]
+### connect_bd_intf_net [get_bd_intf_pins ctrl_connect/M00_AXI] [get_bd_intf_pins ecg_filter_0/s_axi_ctrl]
+### connect_bd_intf_net [get_bd_intf_pins ecg_filter_0/m_axi_gmem0] [get_bd_intf_pins read_connect/S00_AXI]
+### connect_bd_intf_net [get_bd_intf_pins read_connect/M00_AXI] [get_bd_intf_pins ps7/S_AXI_HP0]
+### connect_bd_intf_net [get_bd_intf_pins ecg_filter_0/m_axi_gmem1] [get_bd_intf_pins write_connect/S00_AXI]
+### connect_bd_intf_net [get_bd_intf_pins write_connect/M00_AXI] [get_bd_intf_pins ps7/S_AXI_HP1]
+### connect_bd_net [get_bd_pins ps7/FCLK_CLK0] \
+###     [get_bd_pins ps7/M_AXI_GP0_ACLK] [get_bd_pins ps7/S_AXI_HP0_ACLK] \
+###     [get_bd_pins ps7/S_AXI_HP1_ACLK] [get_bd_pins ecg_filter_0/ap_clk] \
+###     [get_bd_pins ctrl_connect/aclk] [get_bd_pins read_connect/aclk] \
+###     [get_bd_pins write_connect/aclk] [get_bd_pins reset_100m/slowest_sync_clk]
+### connect_bd_net [get_bd_pins ps7/FCLK_RESET0_N] [get_bd_pins reset_100m/ext_reset_in]
+### connect_bd_net [get_bd_pins const_one/dout] [get_bd_pins reset_100m/dcm_locked]
+### connect_bd_net [get_bd_pins const_zero/dout] [get_bd_pins reset_100m/aux_reset_in] [get_bd_pins reset_100m/mb_debug_sys_rst]
+### connect_bd_net [get_bd_pins reset_100m/peripheral_aresetn] \
+###     [get_bd_pins ecg_filter_0/ap_rst_n] [get_bd_pins ctrl_connect/aresetn] \
+###     [get_bd_pins read_connect/aresetn] [get_bd_pins write_connect/aresetn]
+### assign_bd_address
+INFO: [BD 41-3093] Triggering Legacy Auto Assign Algorithm
+Slave segment '/ps7/S_AXI_HP0/HP0_DDR_LOWOCM' is being assigned into address space '/ecg_filter_0/Data_m_axi_gmem0' at <0x0000_0000 [ 512M ]>.
+Slave segment '/ps7/S_AXI_HP1/HP1_DDR_LOWOCM' is being assigned into address space '/ecg_filter_0/Data_m_axi_gmem1' at <0x0000_0000 [ 512M ]>.
+Slave segment '/ecg_filter_0/s_axi_ctrl/Reg' is being assigned into address space '/ps7/Data' at <0x4000_0000 [ 64K ]>.
+### set ecg_ctrl_segments [get_bd_addr_segs -of_objects [get_bd_addr_spaces ps7/Data] -filter {NAME =~ *ecg_filter_0*}]
+### if {[llength $ecg_ctrl_segments] != 1} { error "Could not uniquely identify the filter control address segment." }
+### set_property offset 0x40000000 $ecg_ctrl_segments
+### set_property range 64K $ecg_ctrl_segments
+### validate_bd_design
+WARNING: [BD 41-3281] Instance '/ecg_filter_0' is connected on both sides by SmartConnects and cannot automatically configure itself to match the endpoints. Please manually configure its AXI interfaces as required for the design.
+WARNING: [BD 41-3281] Instance '/ps7' is connected on both sides by SmartConnects and cannot automatically configure itself to match the endpoints. Please manually configure its AXI interfaces as required for the design.
+WARNING: [BD 41-702] Propagation TCL tries to overwrite USER strength parameter PCW_M_AXI_GP0_FREQMHZ(10) on '/ps7' with propagated value(100). Command ignored
+CRITICAL WARNING: [PSU-1]  Parameter : PCW_UIPARAM_DDR_DQS_TO_CLK_DELAY_0 has negative value -0.051 . PS DDR interfaces might fail when entering negative DQS skew values. 
+CRITICAL WARNING: [PSU-2]  Parameter : PCW_UIPARAM_DDR_DQS_TO_CLK_DELAY_1 has negative value -0.006 . PS DDR interfaces might fail when entering negative DQS skew values. 
+CRITICAL WARNING: [PSU-3]  Parameter : PCW_UIPARAM_DDR_DQS_TO_CLK_DELAY_2 has negative value -0.009 . PS DDR interfaces might fail when entering negative DQS skew values. 
+CRITICAL WARNING: [PSU-4]  Parameter : PCW_UIPARAM_DDR_DQS_TO_CLK_DELAY_3 has negative value -0.033 . PS DDR interfaces might fail when entering negative DQS skew values. 
+INFO: [BD 5-943] Reserving offset range <0x4000_0000 [ 64K ]> from slave interface '/ctrl_connect/S00_AXI' to master interface '/ctrl_connect/M00_AXI'. This will be used by smartconnect on path for routing.
+INFO: [xilinx.com:ip:smartconnect:1.0-1] ecg_system_ctrl_connect_0: SmartConnect ecg_system_ctrl_connect_0 is in Ultralite mode.
+INFO: [BD 5-943] Reserving offset range <0x0000_0000 [ 512M ]> from slave interface '/read_connect/S00_AXI' to master interface '/read_connect/M00_AXI'. This will be used by smartconnect on path for routing.
+INFO: [xilinx.com:ip:smartconnect:1.0-1] ecg_system_read_connect_0: SmartConnect ecg_system_read_connect_0 is in High-performance Mode.
+INFO: [Ipptcl 7-1463] No Compatible Board Interface found. Board Tab not created in customize GUI
+INFO: [BD 5-943] Reserving offset range <0x0000_0000 [ 512M ]> from slave interface '/write_connect/S00_AXI' to master interface '/write_connect/M00_AXI'. This will be used by smartconnect on path for routing.
+INFO: [xilinx.com:ip:smartconnect:1.0-1] ecg_system_write_connect_0: SmartConnect ecg_system_write_connect_0 is in High-performance Mode.
+validate_bd_design: Time (s): cpu = 00:00:03 ; elapsed = 00:00:06 . Memory (MB): peak = 790.426 ; gain = 94.121
+### if {[get_property CONFIG.C_AUX_RESET_HIGH [get_bd_cells reset_100m]] != 1} {
+###     error "aux_reset_in is tied low and must be active-high; otherwise AXI remains in reset."
+### }
+### if {[get_property CONFIG.C_EXT_RESET_HIGH [get_bd_cells reset_100m]] != 0} {
+###     error "FCLK_RESET0_N requires an active-low external reset input."
+### }
+### save_bd_design
+Wrote  : <D:\ecg_fpga\build\full_clean_20261104_run1\build\vivado\ecg_scope\ecg_overlay.srcs\sources_1\bd\ecg_system\ecg_system.bd> 
+### set ecg_bd_file [get_files */ecg_system.bd]
+### generate_target all $ecg_bd_file
+INFO: [BD 41-1662] The design 'ecg_system.bd' is already validated. Therefore parameter propagation will not be re-run.
+WARNING: [BD 41-2384] Width mismatch when connecting pin: '/read_connect/S00_AXI_arlock'(1) to pin: '/ecg_filter_0/m_axi_gmem0_ARLOCK'(2) - Only lower order bits will be connected.
+WARNING: [BD 41-2384] Width mismatch when connecting pin: '/write_connect/S00_AXI_awlock'(1) to pin: '/ecg_filter_0/m_axi_gmem1_AWLOCK'(2) - Only lower order bits will be connected.
+Verilog Output written to : D:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.gen/sources_1/bd/ecg_system/synth/ecg_system.v
+WARNING: [BD 41-2384] Width mismatch when connecting pin: '/read_connect/S00_AXI_arlock'(1) to pin: '/ecg_filter_0/m_axi_gmem0_ARLOCK'(2) - Only lower order bits will be connected.
+WARNING: [BD 41-2384] Width mismatch when connecting pin: '/write_connect/S00_AXI_awlock'(1) to pin: '/ecg_filter_0/m_axi_gmem1_AWLOCK'(2) - Only lower order bits will be connected.
+Verilog Output written to : D:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.gen/sources_1/bd/ecg_system/sim/ecg_system.v
+Verilog Output written to : D:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.gen/sources_1/bd/ecg_system/hdl/ecg_system_wrapper.v
+INFO: [IP_Flow 19-5611] Unable to find an associated reset port for the interface 'M_AXI_GP0'. A default connection has been created.
+INFO: [IP_Flow 19-5611] Unable to find an associated reset port for the interface 'S_AXI_HP0'. A default connection has been created.
+INFO: [IP_Flow 19-5611] Unable to find an associated reset port for the interface 'S_AXI_HP1'. A default connection has been created.
+INFO: [BD 41-1029] Generation completed for the IP Integrator block ps7 .
+INFO: [BD 41-1029] Generation completed for the IP Integrator block ecg_filter_0 .
+Exporting to file d:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.gen/sources_1/bd/ecg_system/ip/ecg_system_ctrl_connect_0/bd_0/hw_handoff/ecg_system_ctrl_connect_0.hwh
+Generated Hardware Definition File d:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.gen/sources_1/bd/ecg_system/ip/ecg_system_ctrl_connect_0/bd_0/synth/ecg_system_ctrl_connect_0.hwdef
+INFO: [BD 41-1029] Generation completed for the IP Integrator block ctrl_connect .
+Exporting to file d:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.gen/sources_1/bd/ecg_system/ip/ecg_system_read_connect_0/bd_0/hw_handoff/ecg_system_read_connect_0.hwh
+Generated Hardware Definition File d:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.gen/sources_1/bd/ecg_system/ip/ecg_system_read_connect_0/bd_0/synth/ecg_system_read_connect_0.hwdef
+INFO: [BD 41-1029] Generation completed for the IP Integrator block read_connect .
+Exporting to file d:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.gen/sources_1/bd/ecg_system/ip/ecg_system_write_connect_0/bd_0/hw_handoff/ecg_system_write_connect_0.hwh
+Generated Hardware Definition File d:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.gen/sources_1/bd/ecg_system/ip/ecg_system_write_connect_0/bd_0/synth/ecg_system_write_connect_0.hwdef
+INFO: [BD 41-1029] Generation completed for the IP Integrator block write_connect .
+INFO: [BD 41-1029] Generation completed for the IP Integrator block reset_100m .
+INFO: [BD 41-1029] Generation completed for the IP Integrator block const_one .
+INFO: [BD 41-1029] Generation completed for the IP Integrator block const_zero .
+Exporting to file D:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.gen/sources_1/bd/ecg_system/hw_handoff/ecg_system.hwh
+Generated Hardware Definition File D:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.gen/sources_1/bd/ecg_system/synth/ecg_system.hwdef
+INFO: [BD 41-3262] Generated VHDL Instantiation Template file d:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.gen/sources_1/bd/ecg_system/ecg_system.vho
+INFO: [BD 41-3262] Generated Verilog Instantiation Template file d:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.gen/sources_1/bd/ecg_system/ecg_system.veo
+INFO: [BD 41-3262] Generated System Verilog Instantiation Template file d:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.gen/sources_1/bd/ecg_system/ecg_system_sv.sveo
+generate_target: Time (s): cpu = 00:00:18 ; elapsed = 00:00:28 . Memory (MB): peak = 841.781 ; gain = 51.355
+### set ecg_wrappers [make_wrapper -files $ecg_bd_file -top]
+### add_files -norecurse $ecg_wrappers
+### set_property top ecg_system_wrapper [current_fileset]
+### update_compile_order -fileset sources_1
+### file mkdir [file join $ecg_root board overlay]
+### write_bd_tcl -force [file join $ecg_root board overlay ecg_system_generated.tcl]
+WARNING: [BD 41-2937] The design that will be created by this Tcl script contains the following user IPs:
+/ecg_filter_0
+Please add the following user repository(s):
+d:/ecg_fpga/build/full_clean_20261104_run1/hls_ecg2/hls/impl/ip
+before sourcing this Tcl script or use write_project_tcl.
+INFO: [BD 5-148] Tcl file written out <D:/ecg_fpga/build/full_clean_20261104_run1/board/overlay/ecg_system_generated.tcl>.
+
+### puts "ECG_DESIGN_READY: $ecg_project_dir/ecg_overlay.xpr"
+ECG_DESIGN_READY: D:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.xpr
+### puts "Next: source [file join $ecg_root board build_overlay.tcl]"
+Next: source D:/ecg_fpga/build/full_clean_20261104_run1/board/build_overlay.tcl
+## close_bd_design [current_bd_design]
+## set_property ip_repo_paths [list [file join $ecg_root hls_ecg2 hls impl ip] [file join $ecg_root board vendor digilent]] [current_project]
+## update_ip_catalog
+INFO: [IP_Flow 19-234] Refreshing IP repositories
+INFO: [IP_Flow 19-1700] Loaded user IP repository 'd:/ecg_fpga/build/full_clean_20261104_run1/hls_ecg2/hls/impl/ip'.
+INFO: [IP_Flow 19-1700] Loaded user IP repository 'd:/ecg_fpga/build/full_clean_20261104_run1/board/vendor/digilent'.
+## add_files -norecurse [glob [file join $ecg_root src rtl *.sv]]
+## add_files -norecurse [glob [file join $ecg_root src rtl *.vh]]
+## set_property include_dirs [list [file join $ecg_root src rtl]] [current_fileset]
+## update_compile_order -fileset sources_1
+## open_bd_design [get_files */ecg_system.bd]
+Reading block design file <D:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.srcs/sources_1/bd/ecg_system/ecg_system.bd>...
+Adding component instance block -- xilinx.com:ip:processing_system7:5.5 - ps7
+Adding component instance block -- nuaa:ecg:ecg_filter_top:1.0 - ecg_filter_0
+Adding component instance block -- xilinx.com:ip:smartconnect:1.0 - ctrl_connect
+Adding component instance block -- xilinx.com:ip:smartconnect:1.0 - read_connect
+Adding component instance block -- xilinx.com:ip:smartconnect:1.0 - write_connect
+Adding component instance block -- xilinx.com:ip:proc_sys_reset:5.0 - reset_100m
+Adding component instance block -- xilinx.com:ip:xlconstant:1.1 - const_one
+Adding component instance block -- xilinx.com:ip:xlconstant:1.1 - const_zero
+Successfully read diagram <ecg_system> from block design file <D:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.srcs/sources_1/bd/ecg_system/ecg_system.bd>
+## create_bd_cell -type module -reference ecg_io_top ecg_io
+WARNING: [IP_Flow 19-5101] Packaging a component with a SystemVerilog top file is not fully supported. Please refer to UG1118 'Creating and Packaging Custom IP'.
+WARNING: [IP_Flow 19-587] [HDL Parser] HDL port or parameter 'fifo' has a dependency on the module local parameter or undefined parameter 'FIFO_DEPTH'.
+WARNING: [IP_Flow 19-587] [HDL Parser] HDL port or parameter 'fifo_push' has a dependency on the module local parameter or undefined parameter 'FIFO_DEPTH'.
+WARNING: [IP_Flow 19-587] [HDL Parser] HDL port or parameter 'drdy_missed' has a dependency on the module local parameter or undefined parameter 'FIFO_DEPTH'.
+INFO: [IP_Flow 19-5107] Inferred bus interface 's_axi_aclk' of definition 'xilinx.com:signal:clock:1.0' (from X_INTERFACE_INFO parameter from HDL file).
+INFO: [IP_Flow 19-5107] Inferred bus interface 's_axi_aclk' of definition 'xilinx.com:signal:clock:1.0' (from 'X_INTERFACE_INFO' attribute).
+INFO: [IP_Flow 19-5107] Inferred bus interface 's_axi_aresetn' of definition 'xilinx.com:signal:reset:1.0' (from X_INTERFACE_INFO parameter from HDL file).
+INFO: [IP_Flow 19-5107] Inferred bus interface 's_axi_aresetn' of definition 'xilinx.com:signal:reset:1.0' (from 'X_INTERFACE_INFO' attribute).
+INFO: [IP_Flow 19-5107] Inferred bus interface 'pixel_clk' of definition 'xilinx.com:signal:clock:1.0' (from X_INTERFACE_INFO parameter from HDL file).
+INFO: [IP_Flow 19-5107] Inferred bus interface 'pixel_clk' of definition 'xilinx.com:signal:clock:1.0' (from 'X_INTERFACE_INFO' attribute).
+INFO: [IP_Flow 19-5107] Inferred bus interface 'pixel_resetn' of definition 'xilinx.com:signal:reset:1.0' (from X_INTERFACE_INFO parameter from HDL file).
+INFO: [IP_Flow 19-5107] Inferred bus interface 'pixel_resetn' of definition 'xilinx.com:signal:reset:1.0' (from 'X_INTERFACE_INFO' attribute).
+INFO: [IP_Flow 19-5107] Inferred bus interface 's_axi' of definition 'xilinx.com:interface:aximm:1.0' (from Xilinx Repository).
+INFO: [IP_Flow 19-4728] Bus Interface 's_axi_aclk': Added interface parameter 'ASSOCIATED_BUSIF' with value 's_axi'.
+INFO: [IP_Flow 19-4728] Bus Interface 's_axi_aclk': Added interface parameter 'ASSOCIATED_RESET' with value 's_axi_aresetn'.
+INFO: [IP_Flow 19-4728] Bus Interface 'pixel_clk': Added interface parameter 'ASSOCIATED_RESET' with value 'pixel_resetn'.
+INFO: [IP_Flow 19-4728] Bus Interface 's_axi_aclk': Added interface parameter 'FREQ_HZ' with value '100000000'.
+INFO: [IP_Flow 19-4728] Bus Interface 's_axi_aresetn': Added interface parameter 'POLARITY' with value 'ACTIVE_LOW'.
+INFO: [IP_Flow 19-4728] Bus Interface 'pixel_clk': Added interface parameter 'FREQ_HZ' with value '25200000'.
+INFO: [IP_Flow 19-4728] Bus Interface 'pixel_resetn': Added interface parameter 'POLARITY' with value 'ACTIVE_LOW'.
+INFO: [IP_Flow 19-7067] Note that bus interface 's_axi_aclk' has a fixed FREQ_HZ of '100000000'. This value will be respected whenever this IP is instantiated in IP Integrator.
+INFO: [IP_Flow 19-7067] Note that bus interface 'pixel_clk' has a fixed FREQ_HZ of '25200000'. This value will be respected whenever this IP is instantiated in IP Integrator.
+WARNING: [IP_Flow 19-5661] Bus Interface 'pixel_clk' does not have any bus interfaces associated with it.
+WARNING: [IP_Flow 19-3158] Bus Interface 's_axi': FREQ_HZ bus parameter missing from AXI interface when interface is not associated to a clock.
+## set_property CONFIG.NUM_MI {2} [get_bd_cells ctrl_connect]
+## set ecg_axi [get_bd_intf_pins -of_objects [get_bd_cells ecg_io] -filter {VLNV =~ *aximm_rtl*}]
+## if {[llength $ecg_axi]!=1} {error "Could not infer ecg_io AXI interface: $ecg_axi"}
+## connect_bd_intf_net [get_bd_intf_pins ctrl_connect/M01_AXI] $ecg_axi
+## create_bd_cell -type ip -vlnv xilinx.com:ip:clk_wiz:6.0 video_clocks
+INFO: [Device 21-403] Loading part xc7z020clg400-1
+## set_property -dict [list CONFIG.PRIM_IN_FREQ {100.000} CONFIG.PRIM_SOURCE {No_buffer} CONFIG.NUM_OUT_CLKS {2} \
+##  CONFIG.CLKOUT1_REQUESTED_OUT_FREQ {25.200} CONFIG.CLKOUT2_USED {true} \
+##  CONFIG.CLKOUT2_REQUESTED_OUT_FREQ {126.000} CONFIG.RESET_TYPE {ACTIVE_LOW} \
+##  CONFIG.USE_RESET {true} CONFIG.USE_LOCKED {true}] [get_bd_cells video_clocks]
+## create_bd_cell -type ip -vlnv digilentinc.com:ip:rgb2dvi:1.4 hdmi_encoder
+## set_property -dict [list CONFIG.kGenerateSerialClk {false} CONFIG.kRstActiveHigh {false}] [get_bd_cells hdmi_encoder]
+## create_bd_cell -type ip -vlnv xilinx.com:ip:proc_sys_reset:5.0 reset_video
+INFO: [Ipptcl 7-1463] No Compatible Board Interface found. Board Tab not created in customize GUI
+## set_property CONFIG.C_AUX_RESET_HIGH {1} [get_bd_cells reset_video]
+## set_property CONFIG.C_EXT_RESET_HIGH {0} [get_bd_cells reset_video]
+CRITICAL WARNING: [BD 41-737] Cannot set the parameter C_EXT_RESET_HIGH on /reset_video. It is read-only.
+## connect_bd_net [get_bd_pins ps7/FCLK_CLK0] [get_bd_pins ecg_io/s_axi_aclk] [get_bd_pins video_clocks/clk_in1]
+## connect_bd_net [get_bd_pins ps7/FCLK_RESET0_N] [get_bd_pins video_clocks/resetn] [get_bd_pins reset_video/ext_reset_in]
+## disconnect_bd_net [get_bd_nets -of_objects [get_bd_pins reset_100m/dcm_locked]] [get_bd_pins reset_100m/dcm_locked]
+## connect_bd_net [get_bd_pins video_clocks/locked] [get_bd_pins reset_100m/dcm_locked] [get_bd_pins reset_video/dcm_locked]
+## connect_bd_net [get_bd_pins reset_100m/peripheral_aresetn] [get_bd_pins ecg_io/s_axi_aresetn]
+## connect_bd_net [get_bd_pins const_zero/dout] [get_bd_pins reset_video/aux_reset_in] [get_bd_pins reset_video/mb_debug_sys_rst]
+## connect_bd_net [get_bd_pins video_clocks/clk_out1] [get_bd_pins reset_video/slowest_sync_clk] \
+##  [get_bd_pins ecg_io/pixel_clk] [get_bd_pins hdmi_encoder/PixelClk]
+## connect_bd_net [get_bd_pins video_clocks/clk_out2] [get_bd_pins hdmi_encoder/SerialClk]
+## connect_bd_net [get_bd_pins reset_video/peripheral_aresetn] [get_bd_pins ecg_io/pixel_resetn] [get_bd_pins hdmi_encoder/aRst_n]
+## connect_bd_net [get_bd_pins ecg_io/video_rgb] [get_bd_pins hdmi_encoder/vid_pData]
+WARNING: [BD 41-1306] The connection to interface pin </hdmi_encoder/vid_pData> is being overridden by the user with net <ecg_io_video_rgb>. This pin will not be connected as a part of interface connection <RGB>, and might not recreate the connectivity as expected using the writ_bd_tcl command.
+## connect_bd_net [get_bd_pins ecg_io/video_de] [get_bd_pins hdmi_encoder/vid_pVDE]
+WARNING: [BD 41-1306] The connection to interface pin </hdmi_encoder/vid_pVDE> is being overridden by the user with net <ecg_io_video_de>. This pin will not be connected as a part of interface connection <RGB>, and might not recreate the connectivity as expected using the writ_bd_tcl command.
+## connect_bd_net [get_bd_pins ecg_io/video_hsync] [get_bd_pins hdmi_encoder/vid_pHSync]
+WARNING: [BD 41-1306] The connection to interface pin </hdmi_encoder/vid_pHSync> is being overridden by the user with net <ecg_io_video_hsync>. This pin will not be connected as a part of interface connection <RGB>, and might not recreate the connectivity as expected using the writ_bd_tcl command.
+## connect_bd_net [get_bd_pins ecg_io/video_vsync] [get_bd_pins hdmi_encoder/vid_pVSync]
+WARNING: [BD 41-1306] The connection to interface pin </hdmi_encoder/vid_pVSync> is being overridden by the user with net <ecg_io_video_vsync>. This pin will not be connected as a part of interface connection <RGB>, and might not recreate the connectivity as expected using the writ_bd_tcl command.
+## proc scope_port {name dir pin {left -1}} {
+##  if {$left>=0} {set p [create_bd_port -dir $dir -from $left -to 0 $name]} else {set p [create_bd_port -dir $dir $name]}
+##  connect_bd_net $p [get_bd_pins $pin]
+## }
+## foreach p {ads_cs_n ads_sclk ads_din ads_start ads_pwdn_reset_n} {scope_port $p O ecg_io/$p}
+## foreach p {ads_dout ads_drdy_n hdmi_hpd} {scope_port $p I ecg_io/$p}
+## scope_port buttons I ecg_io/buttons 3
+## scope_port sw0 I ecg_io/sw0
+## scope_port hdmi_clk_p O hdmi_encoder/TMDS_Clk_p
+WARNING: [BD 41-1306] The connection to interface pin </hdmi_encoder/TMDS_Clk_p> is being overridden by the user with net <hdmi_encoder_TMDS_Clk_p>. This pin will not be connected as a part of interface connection <TMDS>, and might not recreate the connectivity as expected using the writ_bd_tcl command.
+## scope_port hdmi_clk_n O hdmi_encoder/TMDS_Clk_n
+WARNING: [BD 41-1306] The connection to interface pin </hdmi_encoder/TMDS_Clk_n> is being overridden by the user with net <hdmi_encoder_TMDS_Clk_n>. This pin will not be connected as a part of interface connection <TMDS>, and might not recreate the connectivity as expected using the writ_bd_tcl command.
+## scope_port hdmi_data_p O hdmi_encoder/TMDS_Data_p 2
+WARNING: [BD 41-1306] The connection to interface pin </hdmi_encoder/TMDS_Data_p> is being overridden by the user with net <hdmi_encoder_TMDS_Data_p>. This pin will not be connected as a part of interface connection <TMDS>, and might not recreate the connectivity as expected using the writ_bd_tcl command.
+## scope_port hdmi_data_n O hdmi_encoder/TMDS_Data_n 2
+WARNING: [BD 41-1306] The connection to interface pin </hdmi_encoder/TMDS_Data_n> is being overridden by the user with net <hdmi_encoder_TMDS_Data_n>. This pin will not be connected as a part of interface connection <TMDS>, and might not recreate the connectivity as expected using the writ_bd_tcl command.
+## assign_bd_address
+INFO: [BD 41-3093] Triggering Legacy Auto Assign Algorithm
+Slave segment '/ecg_io/s_axi/reg0' is being assigned into address space '/ps7/Data' at <0x4001_0000 [ 64K ]>.
+## set ecg_io_seg [get_bd_addr_segs -of_objects [get_bd_addr_spaces ps7/Data] -filter {NAME =~ *ecg_io*}]
+## if {[llength $ecg_io_seg]!=1} {error "Missing ecg_io control address segment"}
+## set_property offset 0x40010000 $ecg_io_seg
+## set_property range 64K $ecg_io_seg
+## validate_bd_design
+WARNING: [BD 41-3281] Instance '/ecg_filter_0' is connected on both sides by SmartConnects and cannot automatically configure itself to match the endpoints. Please manually configure its AXI interfaces as required for the design.
+WARNING: [BD 41-3281] Instance '/ps7' is connected on both sides by SmartConnects and cannot automatically configure itself to match the endpoints. Please manually configure its AXI interfaces as required for the design.
+clk_domain: ecg_system_ps7_0_FCLK_CLK0, clk_domain_1: ecg_system_video_clocks_0_clk_out1, clkDomainValSrc_1: DEFAULT, clk_domain_ctrl: 0
+WARNING: [BD 41-702] Propagation TCL tries to overwrite USER strength parameter PCW_M_AXI_GP0_FREQMHZ(10) on '/ps7' with propagated value(100). Command ignored
+INFO: [BD 5-943] Reserving offset range <0x4000_0000 [ 64K ]> from slave interface '/ctrl_connect/S00_AXI' to master interface '/ctrl_connect/M00_AXI'. This will be used by smartconnect on path for routing.
+INFO: [BD 5-943] Reserving offset range <0x4001_0000 [ 64K ]> from slave interface '/ctrl_connect/S00_AXI' to master interface '/ctrl_connect/M01_AXI'. This will be used by smartconnect on path for routing.
+INFO: [xilinx.com:ip:smartconnect:1.0-1] ecg_system_ctrl_connect_0: SmartConnect ecg_system_ctrl_connect_0 is in Ultralite mode.
+INFO: [BD 5-943] Reserving offset range <0x0000_0000 [ 512M ]> from slave interface '/read_connect/S00_AXI' to master interface '/read_connect/M00_AXI'. This will be used by smartconnect on path for routing.
+INFO: [xilinx.com:ip:smartconnect:1.0-1] ecg_system_read_connect_0: SmartConnect ecg_system_read_connect_0 is in High-performance Mode.
+INFO: [Ipptcl 7-1463] No Compatible Board Interface found. Board Tab not created in customize GUI
+INFO: [BD 5-943] Reserving offset range <0x0000_0000 [ 512M ]> from slave interface '/write_connect/S00_AXI' to master interface '/write_connect/M00_AXI'. This will be used by smartconnect on path for routing.
+INFO: [xilinx.com:ip:smartconnect:1.0-1] ecg_system_write_connect_0: SmartConnect ecg_system_write_connect_0 is in High-performance Mode.
+INFO: [xilinx.com:ip:clk_wiz:6.0-1] /video_clocks clk_wiz propagate
+## save_bd_design
+Wrote  : <D:\ecg_fpga\build\full_clean_20261104_run1\build\vivado\ecg_scope\ecg_overlay.srcs\sources_1\bd\ecg_system\ecg_system.bd> 
+## generate_target all [get_files */ecg_system.bd]
+INFO: [BD 41-1662] The design 'ecg_system.bd' is already validated. Therefore parameter propagation will not be re-run.
+WARNING: [BD 41-2384] Width mismatch when connecting pin: '/read_connect/S00_AXI_arlock'(1) to pin: '/ecg_filter_0/m_axi_gmem0_ARLOCK'(2) - Only lower order bits will be connected.
+WARNING: [BD 41-2384] Width mismatch when connecting pin: '/write_connect/S00_AXI_awlock'(1) to pin: '/ecg_filter_0/m_axi_gmem1_AWLOCK'(2) - Only lower order bits will be connected.
+Verilog Output written to : d:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.gen/sources_1/bd/ecg_system/synth/ecg_system.v
+WARNING: [BD 41-2384] Width mismatch when connecting pin: '/read_connect/S00_AXI_arlock'(1) to pin: '/ecg_filter_0/m_axi_gmem0_ARLOCK'(2) - Only lower order bits will be connected.
+WARNING: [BD 41-2384] Width mismatch when connecting pin: '/write_connect/S00_AXI_awlock'(1) to pin: '/ecg_filter_0/m_axi_gmem1_AWLOCK'(2) - Only lower order bits will be connected.
+Verilog Output written to : d:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.gen/sources_1/bd/ecg_system/sim/ecg_system.v
+Verilog Output written to : d:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.gen/sources_1/bd/ecg_system/hdl/ecg_system_wrapper.v
+Exporting to file d:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.gen/sources_1/bd/ecg_system/ip/ecg_system_ctrl_connect_0/bd_0/hw_handoff/ecg_system_ctrl_connect_0.hwh
+Generated Hardware Definition File d:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.gen/sources_1/bd/ecg_system/ip/ecg_system_ctrl_connect_0/bd_0/synth/ecg_system_ctrl_connect_0.hwdef
+INFO: [BD 41-1029] Generation completed for the IP Integrator block ctrl_connect .
+Exporting to file d:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.gen/sources_1/bd/ecg_system/ip/ecg_system_read_connect_0/bd_0/hw_handoff/ecg_system_read_connect_0.hwh
+Generated Hardware Definition File d:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.gen/sources_1/bd/ecg_system/ip/ecg_system_read_connect_0/bd_0/synth/ecg_system_read_connect_0.hwdef
+INFO: [BD 41-1029] Generation completed for the IP Integrator block read_connect .
+Exporting to file d:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.gen/sources_1/bd/ecg_system/ip/ecg_system_write_connect_0/bd_0/hw_handoff/ecg_system_write_connect_0.hwh
+Generated Hardware Definition File d:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.gen/sources_1/bd/ecg_system/ip/ecg_system_write_connect_0/bd_0/synth/ecg_system_write_connect_0.hwdef
+INFO: [BD 41-1029] Generation completed for the IP Integrator block write_connect .
+INFO: [BD 41-1029] Generation completed for the IP Integrator block ecg_io .
+INFO: [BD 41-1029] Generation completed for the IP Integrator block video_clocks .
+INFO: [BD 41-1029] Generation completed for the IP Integrator block hdmi_encoder .
+INFO: [BD 41-1029] Generation completed for the IP Integrator block reset_video .
+Exporting to file d:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.gen/sources_1/bd/ecg_system/hw_handoff/ecg_system.hwh
+Generated Hardware Definition File d:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.gen/sources_1/bd/ecg_system/synth/ecg_system.hwdef
+INFO: [BD 41-3262] Generated VHDL Instantiation Template file d:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.gen/sources_1/bd/ecg_system/ecg_system.vho
+INFO: [BD 41-3262] Generated Verilog Instantiation Template file d:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.gen/sources_1/bd/ecg_system/ecg_system.veo
+INFO: [BD 41-3262] Generated System Verilog Instantiation Template file d:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.gen/sources_1/bd/ecg_system/ecg_system_sv.sveo
+generate_target: Time (s): cpu = 00:00:02 ; elapsed = 00:00:07 . Memory (MB): peak = 1092.680 ; gain = 15.477
+## set_property top ecg_system_wrapper [current_fileset]
+## add_files -fileset constrs_1 [file join $ecg_root board ads1292_pmoda.xdc]
+## add_files -fileset constrs_1 [file join $ecg_root board scope_hdmi.xdc]
+## update_compile_order -fileset sources_1
+## file mkdir [file join $ecg_root board scope]
+## write_bd_tcl -force [file join $ecg_root board scope ecg_scope_generated.tcl]
+WARNING: [BD 41-2937] The design that will be created by this Tcl script contains the following user IPs:
+/ecg_filter_0, /hdmi_encoder
+Please add the following user repository(s):
+d:/ecg_fpga/build/full_clean_20261104_run1/hls_ecg2/hls/impl/ip
+d:/ecg_fpga/build/full_clean_20261104_run1/board/vendor/digilent
+before sourcing this Tcl script or use write_project_tcl.
+WARNING: [BD 41-2925] The design that will be created by this Tcl script contains the following module references: ecg_io_top.
+Please add the sources of those modules before sourcing this Tcl script or use write_project_tcl.
+INFO: [BD 5-148] Tcl file written out <D:/ecg_fpga/build/full_clean_20261104_run1/board/scope/ecg_scope_generated.tcl>.
+
+## puts "ECG_SCOPE_READY"
+ECG_SCOPE_READY
+# close_bd_design [current_bd_design]
+# set_property ip_repo_paths [list [file join $root hls_ecg2 hls impl ip] [file join $root hls_conv hls impl ip] [file join $root board vendor digilent]] [current_project]
+# update_ip_catalog
+INFO: [IP_Flow 19-234] Refreshing IP repositories
+INFO: [IP_Flow 19-1700] Loaded user IP repository 'd:/ecg_fpga/build/full_clean_20261104_run1/hls_ecg2/hls/impl/ip'.
+INFO: [IP_Flow 19-1700] Loaded user IP repository 'd:/ecg_fpga/build/full_clean_20261104_run1/hls_conv/hls/impl/ip'.
+INFO: [IP_Flow 19-1700] Loaded user IP repository 'd:/ecg_fpga/build/full_clean_20261104_run1/board/vendor/digilent'.
+# open_bd_design [get_files */ecg_system.bd]
+Reading block design file <D:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.srcs/sources_1/bd/ecg_system/ecg_system.bd>...
+Adding component instance block -- xilinx.com:ip:processing_system7:5.5 - ps7
+Adding component instance block -- nuaa:ecg:ecg_filter_top:1.0 - ecg_filter_0
+Adding component instance block -- xilinx.com:ip:smartconnect:1.0 - ctrl_connect
+Adding component instance block -- xilinx.com:ip:smartconnect:1.0 - read_connect
+Adding component instance block -- xilinx.com:ip:smartconnect:1.0 - write_connect
+Adding component instance block -- xilinx.com:ip:proc_sys_reset:5.0 - reset_100m
+Adding component instance block -- xilinx.com:ip:xlconstant:1.1 - const_one
+Adding component instance block -- xilinx.com:ip:xlconstant:1.1 - const_zero
+Adding component instance block -- xilinx.com:module_ref:ecg_io_top:1.0 - ecg_io
+Adding component instance block -- xilinx.com:ip:clk_wiz:6.0 - video_clocks
+Adding component instance block -- digilentinc.com:ip:rgb2dvi:1.4 - hdmi_encoder
+Adding component instance block -- xilinx.com:ip:proc_sys_reset:5.0 - reset_video
+Successfully read diagram <ecg_system> from block design file <D:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.srcs/sources_1/bd/ecg_system/ecg_system.bd>
+# set_property -dict [list CONFIG.PCW_USE_S_AXI_HP2 {1} CONFIG.PCW_USE_S_AXI_HP3 {1}] [get_bd_cells ps7]
+CRITICAL WARNING: [PSU-1]  Parameter : PCW_UIPARAM_DDR_DQS_TO_CLK_DELAY_0 has negative value -0.051 . PS DDR interfaces might fail when entering negative DQS skew values. 
+CRITICAL WARNING: [PSU-2]  Parameter : PCW_UIPARAM_DDR_DQS_TO_CLK_DELAY_1 has negative value -0.006 . PS DDR interfaces might fail when entering negative DQS skew values. 
+CRITICAL WARNING: [PSU-3]  Parameter : PCW_UIPARAM_DDR_DQS_TO_CLK_DELAY_2 has negative value -0.009 . PS DDR interfaces might fail when entering negative DQS skew values. 
+CRITICAL WARNING: [PSU-4]  Parameter : PCW_UIPARAM_DDR_DQS_TO_CLK_DELAY_3 has negative value -0.033 . PS DDR interfaces might fail when entering negative DQS skew values. 
+# set_property CONFIG.NUM_MI 3 [get_bd_cells ctrl_connect]
+# create_bd_cell -type ip -vlnv nuaa:ecg:ecg_conv:1.0 ecg_conv_0
+# connect_bd_intf_net [get_bd_intf_pins ctrl_connect/M02_AXI] [get_bd_intf_pins ecg_conv_0/s_axi_ctrl]
+# foreach {name master slave} {conv_read gmem0 HP2 conv_write gmem1 HP3} {
+#  create_bd_cell -type ip -vlnv xilinx.com:ip:smartconnect:1.0 $name
+#  set_property -dict [list CONFIG.NUM_SI 1 CONFIG.NUM_MI 1] [get_bd_cells $name]
+#  connect_bd_intf_net [get_bd_intf_pins ecg_conv_0/m_axi_$master] [get_bd_intf_pins $name/S00_AXI]
+#  connect_bd_intf_net [get_bd_intf_pins $name/M00_AXI] [get_bd_intf_pins ps7/S_AXI_$slave]
+#  connect_bd_net [get_bd_pins ps7/FCLK_CLK0] [get_bd_pins $name/aclk] [get_bd_pins ps7/S_AXI_${slave}_ACLK]
+#  connect_bd_net [get_bd_pins reset_100m/peripheral_aresetn] [get_bd_pins $name/aresetn]
+# }
+# connect_bd_net [get_bd_pins ps7/FCLK_CLK0] [get_bd_pins ecg_conv_0/ap_clk]
+# connect_bd_net [get_bd_pins reset_100m/peripheral_aresetn] [get_bd_pins ecg_conv_0/ap_rst_n]
+# assign_bd_address
+INFO: [BD 41-3093] Triggering Legacy Auto Assign Algorithm
+Slave segment '/ps7/S_AXI_HP2/HP2_DDR_LOWOCM' is being assigned into address space '/ecg_conv_0/Data_m_axi_gmem0' at <0x0000_0000 [ 512M ]>.
+Slave segment '/ps7/S_AXI_HP3/HP3_DDR_LOWOCM' is being assigned into address space '/ecg_conv_0/Data_m_axi_gmem1' at <0x0000_0000 [ 512M ]>.
+Slave segment '/ecg_conv_0/s_axi_ctrl/Reg' is being assigned into address space '/ps7/Data' at <0x4002_0000 [ 64K ]>.
+# set seg [get_bd_addr_segs -of_objects [get_bd_addr_spaces ps7/Data] -filter {NAME =~ *ecg_conv_0*}]
+# set_property offset 0x40020000 $seg
+# set_property range 64K $seg
+# validate_bd_design
+WARNING: [BD 41-3281] Instance '/ecg_filter_0' is connected on both sides by SmartConnects and cannot automatically configure itself to match the endpoints. Please manually configure its AXI interfaces as required for the design.
+WARNING: [BD 41-3281] Instance '/ps7' is connected on both sides by SmartConnects and cannot automatically configure itself to match the endpoints. Please manually configure its AXI interfaces as required for the design.
+WARNING: [BD 41-3281] Instance '/ecg_conv_0' is connected on both sides by SmartConnects and cannot automatically configure itself to match the endpoints. Please manually configure its AXI interfaces as required for the design.
+clk_domain: ecg_system_ps7_0_FCLK_CLK0, clk_domain_1: ecg_system_ps7_0_FCLK_CLK0, clkDomainValSrc_1: PROPAGATED, clk_domain_ctrl: 0
+WARNING: [BD 41-702] Propagation TCL tries to overwrite USER strength parameter PCW_M_AXI_GP0_FREQMHZ(10) on '/ps7' with propagated value(100). Command ignored
+CRITICAL WARNING: [PSU-1]  Parameter : PCW_UIPARAM_DDR_DQS_TO_CLK_DELAY_0 has negative value -0.051 . PS DDR interfaces might fail when entering negative DQS skew values. 
+CRITICAL WARNING: [PSU-2]  Parameter : PCW_UIPARAM_DDR_DQS_TO_CLK_DELAY_1 has negative value -0.006 . PS DDR interfaces might fail when entering negative DQS skew values. 
+CRITICAL WARNING: [PSU-3]  Parameter : PCW_UIPARAM_DDR_DQS_TO_CLK_DELAY_2 has negative value -0.009 . PS DDR interfaces might fail when entering negative DQS skew values. 
+CRITICAL WARNING: [PSU-4]  Parameter : PCW_UIPARAM_DDR_DQS_TO_CLK_DELAY_3 has negative value -0.033 . PS DDR interfaces might fail when entering negative DQS skew values. 
+INFO: [BD 5-943] Reserving offset range <0x4000_0000 [ 64K ]> from slave interface '/ctrl_connect/S00_AXI' to master interface '/ctrl_connect/M00_AXI'. This will be used by smartconnect on path for routing.
+INFO: [BD 5-943] Reserving offset range <0x4001_0000 [ 64K ]> from slave interface '/ctrl_connect/S00_AXI' to master interface '/ctrl_connect/M01_AXI'. This will be used by smartconnect on path for routing.
+INFO: [BD 5-943] Reserving offset range <0x4002_0000 [ 64K ]> from slave interface '/ctrl_connect/S00_AXI' to master interface '/ctrl_connect/M02_AXI'. This will be used by smartconnect on path for routing.
+INFO: [xilinx.com:ip:smartconnect:1.0-1] ecg_system_ctrl_connect_0: SmartConnect ecg_system_ctrl_connect_0 is in Ultralite mode.
+INFO: [BD 5-943] Reserving offset range <0x0000_0000 [ 512M ]> from slave interface '/read_connect/S00_AXI' to master interface '/read_connect/M00_AXI'. This will be used by smartconnect on path for routing.
+INFO: [xilinx.com:ip:smartconnect:1.0-1] ecg_system_read_connect_0: SmartConnect ecg_system_read_connect_0 is in High-performance Mode.
+INFO: [Ipptcl 7-1463] No Compatible Board Interface found. Board Tab not created in customize GUI
+INFO: [BD 5-943] Reserving offset range <0x0000_0000 [ 512M ]> from slave interface '/write_connect/S00_AXI' to master interface '/write_connect/M00_AXI'. This will be used by smartconnect on path for routing.
+INFO: [xilinx.com:ip:smartconnect:1.0-1] ecg_system_write_connect_0: SmartConnect ecg_system_write_connect_0 is in High-performance Mode.
+INFO: [BD 5-943] Reserving offset range <0x0000_0000 [ 512M ]> from slave interface '/conv_read/S00_AXI' to master interface '/conv_read/M00_AXI'. This will be used by smartconnect on path for routing.
+INFO: [xilinx.com:ip:smartconnect:1.0-1] ecg_system_conv_read_0: SmartConnect ecg_system_conv_read_0 is in High-performance Mode.
+INFO: [BD 5-943] Reserving offset range <0x0000_0000 [ 512M ]> from slave interface '/conv_write/S00_AXI' to master interface '/conv_write/M00_AXI'. This will be used by smartconnect on path for routing.
+INFO: [xilinx.com:ip:smartconnect:1.0-1] ecg_system_conv_write_0: SmartConnect ecg_system_conv_write_0 is in High-performance Mode.
+INFO: [xilinx.com:ip:clk_wiz:6.0-1] /video_clocks clk_wiz propagate
+validate_bd_design: Time (s): cpu = 00:00:07 ; elapsed = 00:00:08 . Memory (MB): peak = 1119.977 ; gain = 27.293
+# save_bd_design
+Wrote  : <D:\ecg_fpga\build\full_clean_20261104_run1\build\vivado\ecg_scope\ecg_overlay.srcs\sources_1\bd\ecg_system\ecg_system.bd> 
+# generate_target all [get_files */ecg_system.bd]
+INFO: [BD 41-1662] The design 'ecg_system.bd' is already validated. Therefore parameter propagation will not be re-run.
+WARNING: [BD 41-2384] Width mismatch when connecting pin: '/read_connect/S00_AXI_arlock'(1) to pin: '/ecg_filter_0/m_axi_gmem0_ARLOCK'(2) - Only lower order bits will be connected.
+WARNING: [BD 41-2384] Width mismatch when connecting pin: '/write_connect/S00_AXI_awlock'(1) to pin: '/ecg_filter_0/m_axi_gmem1_AWLOCK'(2) - Only lower order bits will be connected.
+WARNING: [BD 41-2384] Width mismatch when connecting pin: '/conv_read/S00_AXI_arlock'(1) to pin: '/ecg_conv_0/m_axi_gmem0_ARLOCK'(2) - Only lower order bits will be connected.
+WARNING: [BD 41-2384] Width mismatch when connecting pin: '/conv_write/S00_AXI_awlock'(1) to pin: '/ecg_conv_0/m_axi_gmem1_AWLOCK'(2) - Only lower order bits will be connected.
+Verilog Output written to : d:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.gen/sources_1/bd/ecg_system/synth/ecg_system.v
+WARNING: [BD 41-2384] Width mismatch when connecting pin: '/read_connect/S00_AXI_arlock'(1) to pin: '/ecg_filter_0/m_axi_gmem0_ARLOCK'(2) - Only lower order bits will be connected.
+WARNING: [BD 41-2384] Width mismatch when connecting pin: '/write_connect/S00_AXI_awlock'(1) to pin: '/ecg_filter_0/m_axi_gmem1_AWLOCK'(2) - Only lower order bits will be connected.
+WARNING: [BD 41-2384] Width mismatch when connecting pin: '/conv_read/S00_AXI_arlock'(1) to pin: '/ecg_conv_0/m_axi_gmem0_ARLOCK'(2) - Only lower order bits will be connected.
+WARNING: [BD 41-2384] Width mismatch when connecting pin: '/conv_write/S00_AXI_awlock'(1) to pin: '/ecg_conv_0/m_axi_gmem1_AWLOCK'(2) - Only lower order bits will be connected.
+Verilog Output written to : d:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.gen/sources_1/bd/ecg_system/sim/ecg_system.v
+Verilog Output written to : d:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.gen/sources_1/bd/ecg_system/hdl/ecg_system_wrapper.v
+INFO: [IP_Flow 19-5611] Unable to find an associated reset port for the interface 'M_AXI_GP0'. A default connection has been created.
+INFO: [IP_Flow 19-5611] Unable to find an associated reset port for the interface 'S_AXI_HP0'. A default connection has been created.
+INFO: [IP_Flow 19-5611] Unable to find an associated reset port for the interface 'S_AXI_HP1'. A default connection has been created.
+INFO: [IP_Flow 19-5611] Unable to find an associated reset port for the interface 'S_AXI_HP2'. A default connection has been created.
+INFO: [IP_Flow 19-5611] Unable to find an associated reset port for the interface 'S_AXI_HP3'. A default connection has been created.
+INFO: [BD 41-1029] Generation completed for the IP Integrator block ps7 .
+Exporting to file d:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.gen/sources_1/bd/ecg_system/ip/ecg_system_ctrl_connect_0/bd_0/hw_handoff/ecg_system_ctrl_connect_0.hwh
+Generated Hardware Definition File d:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.gen/sources_1/bd/ecg_system/ip/ecg_system_ctrl_connect_0/bd_0/synth/ecg_system_ctrl_connect_0.hwdef
+INFO: [BD 41-1029] Generation completed for the IP Integrator block ctrl_connect .
+Exporting to file d:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.gen/sources_1/bd/ecg_system/ip/ecg_system_read_connect_0/bd_0/hw_handoff/ecg_system_read_connect_0.hwh
+Generated Hardware Definition File d:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.gen/sources_1/bd/ecg_system/ip/ecg_system_read_connect_0/bd_0/synth/ecg_system_read_connect_0.hwdef
+INFO: [BD 41-1029] Generation completed for the IP Integrator block read_connect .
+Exporting to file d:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.gen/sources_1/bd/ecg_system/ip/ecg_system_write_connect_0/bd_0/hw_handoff/ecg_system_write_connect_0.hwh
+Generated Hardware Definition File d:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.gen/sources_1/bd/ecg_system/ip/ecg_system_write_connect_0/bd_0/synth/ecg_system_write_connect_0.hwdef
+INFO: [BD 41-1029] Generation completed for the IP Integrator block write_connect .
+INFO: [BD 41-1029] Generation completed for the IP Integrator block ecg_conv_0 .
+Exporting to file d:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.gen/sources_1/bd/ecg_system/ip/ecg_system_conv_read_0/bd_0/hw_handoff/ecg_system_conv_read_0.hwh
+Generated Hardware Definition File d:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.gen/sources_1/bd/ecg_system/ip/ecg_system_conv_read_0/bd_0/synth/ecg_system_conv_read_0.hwdef
+INFO: [BD 41-1029] Generation completed for the IP Integrator block conv_read .
+Exporting to file d:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.gen/sources_1/bd/ecg_system/ip/ecg_system_conv_write_0/bd_0/hw_handoff/ecg_system_conv_write_0.hwh
+Generated Hardware Definition File d:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.gen/sources_1/bd/ecg_system/ip/ecg_system_conv_write_0/bd_0/synth/ecg_system_conv_write_0.hwdef
+INFO: [BD 41-1029] Generation completed for the IP Integrator block conv_write .
+Exporting to file d:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.gen/sources_1/bd/ecg_system/hw_handoff/ecg_system.hwh
+Generated Hardware Definition File d:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.gen/sources_1/bd/ecg_system/synth/ecg_system.hwdef
+INFO: [BD 41-3262] Generated VHDL Instantiation Template file d:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.gen/sources_1/bd/ecg_system/ecg_system.vho
+INFO: [BD 41-3262] Generated Verilog Instantiation Template file d:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.gen/sources_1/bd/ecg_system/ecg_system.veo
+INFO: [BD 41-3262] Generated System Verilog Instantiation Template file d:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.gen/sources_1/bd/ecg_system/ecg_system_sv.sveo
+generate_target: Time (s): cpu = 00:00:22 ; elapsed = 00:00:30 . Memory (MB): peak = 1187.492 ; gain = 67.516
+# update_compile_order -fileset sources_1
+# make_wrapper -files [get_files */ecg_system.bd] -top -force
+# add_files -fileset constrs_1 [file join $root board dual_view.xdc]
+# if {[lsearch -exact $argv --validate-only]>=0} {
+#  write_bd_tcl -force [file join $root build clean_system_generated.tcl]
+#  puts "CLEAN_BD_VALIDATION_PASS: reused exported IP; not a full HLS/bit rebuild"
+#  close_project
+#  exit
+# }
+# reset_run synth_1
+# launch_runs impl_1 -to_step write_bitstream -jobs 4
+[Wed Nov  4 17:00:40 2026] Launched ecg_system_conv_read_0_synth_1, ecg_system_ecg_conv_0_0_synth_1, ecg_system_conv_write_0_synth_1, ecg_system_hdmi_encoder_0_synth_1, ecg_system_reset_video_0_synth_1, ecg_system_ecg_io_0_synth_1, ecg_system_video_clocks_0_synth_1, ecg_system_ecg_filter_0_0_synth_1, ecg_system_ps7_0_synth_1, ecg_system_read_connect_0_synth_1, ecg_system_ctrl_connect_0_synth_1, ecg_system_write_connect_0_synth_1, ecg_system_reset_100m_0_synth_1, synth_1...
+Run output will be captured here:
+ecg_system_conv_read_0_synth_1: D:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.runs/ecg_system_conv_read_0_synth_1/runme.log
+ecg_system_ecg_conv_0_0_synth_1: D:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.runs/ecg_system_ecg_conv_0_0_synth_1/runme.log
+ecg_system_conv_write_0_synth_1: D:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.runs/ecg_system_conv_write_0_synth_1/runme.log
+ecg_system_hdmi_encoder_0_synth_1: D:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.runs/ecg_system_hdmi_encoder_0_synth_1/runme.log
+ecg_system_reset_video_0_synth_1: D:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.runs/ecg_system_reset_video_0_synth_1/runme.log
+ecg_system_ecg_io_0_synth_1: D:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.runs/ecg_system_ecg_io_0_synth_1/runme.log
+ecg_system_video_clocks_0_synth_1: D:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.runs/ecg_system_video_clocks_0_synth_1/runme.log
+ecg_system_ecg_filter_0_0_synth_1: D:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.runs/ecg_system_ecg_filter_0_0_synth_1/runme.log
+ecg_system_ps7_0_synth_1: D:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.runs/ecg_system_ps7_0_synth_1/runme.log
+ecg_system_read_connect_0_synth_1: D:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.runs/ecg_system_read_connect_0_synth_1/runme.log
+ecg_system_ctrl_connect_0_synth_1: D:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.runs/ecg_system_ctrl_connect_0_synth_1/runme.log
+ecg_system_write_connect_0_synth_1: D:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.runs/ecg_system_write_connect_0_synth_1/runme.log
+ecg_system_reset_100m_0_synth_1: D:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.runs/ecg_system_reset_100m_0_synth_1/runme.log
+synth_1: D:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.runs/synth_1/runme.log
+[Wed Nov  4 17:00:40 2026] Launched impl_1...
+Run output will be captured here: D:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.runs/impl_1/runme.log
+launch_runs: Time (s): cpu = 00:00:02 ; elapsed = 00:00:06 . Memory (MB): peak = 1187.977 ; gain = 0.484
+# wait_on_run impl_1
+[Wed Nov  4 17:00:40 2026] Waiting for impl_1 to finish...
+
+*** Running vivado
+    with args -log ecg_system_wrapper.vdi -applog -m64 -product Vivado -messageDb vivado.pb -mode batch -source ecg_system_wrapper.tcl -notrace
+
+
+INFO: [Common 17-3922] A valid Vivado Design Suite BASIC license has been detected. Your current license is active and will expire on 30-sep-2027.
+#-----------------------------------------------------------
+# Vivado v2026.1 (64-bit)
+# SW Build 6511674 on Tue Jun 16 11:02:23 MDT 2026
+# IP Build 6504888 on Tue Jun 09 09:05:25 MDT 2026
+# SharedData Build 6501428 on Mon Jun 08 17:34:18 MDT 2026
+# Start of session at: Wed Nov  4 17:07:04 2026
+# Process ID         : 46068
+# Current directory  : D:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.runs/impl_1
+# Command line       : vivado.exe -log ecg_system_wrapper.vdi -applog -product Vivado -messageDb vivado.pb -mode batch -source ecg_system_wrapper.tcl -notrace
+# Log file           : D:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.runs/impl_1/ecg_system_wrapper.vdi
+# Journal file       : D:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.runs/impl_1\vivado.jou
+# Running On         : LAPTOP-V960FPLV
+# Platform           : Windows 11
+# Operating System   : 26200
+# Processor Detail   : AMD Ryzen 9 8945HX with Radeon Graphics        
+# CPU Frequency      : 2495 MHz
+# CPU Physical cores : 16
+# CPU Logical cores  : 32
+# Host memory        : 33605 MB
+# Swap memory        : 25769 MB
+# Total Virtual      : 59375 MB
+# Available Virtual  : 10701 MB
+#-----------------------------------------------------------
+
+****** Vivado v2026.1 (64-bit)
+  **** SW Build 6511674 on Tue Jun 16 11:02:23 MDT 2026
+  **** IP Build 6504888 on Tue Jun 09 09:05:25 MDT 2026
+  **** SharedData Build 6501428 on Mon Jun 08 17:34:18 MDT 2026
+  **** Start of session at: Wed Nov  4 17:07:04 2026
+    ** Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
+    ** Copyright 2022-2026 Advanced Micro Devices, Inc. All Rights Reserved.
+
+source ecg_system_wrapper.tcl -notrace
+create_project: Time (s): cpu = 00:00:06 ; elapsed = 00:00:11 . Memory (MB): peak = 583.605 ; gain = 267.422
+INFO: [IP_Flow 19-234] Refreshing IP repositories
+INFO: [IP_Flow 19-1700] Loaded user IP repository 'd:/ecg_fpga/build/full_clean_20261104_run1/hls_ecg2/hls/impl/ip'.
+INFO: [IP_Flow 19-1700] Loaded user IP repository 'd:/ecg_fpga/build/full_clean_20261104_run1/hls_conv/hls/impl/ip'.
+INFO: [IP_Flow 19-1700] Loaded user IP repository 'd:/ecg_fpga/build/full_clean_20261104_run1/board/vendor/digilent'.
+INFO: [IP_Flow 19-2313] Loaded Vivado IP repository 'D:/AMDDesignTools/2026.1/Vivado/data/ip'.
+WARNING: [IP_Flow 19-4995] The host OS only allows 260 characters in a normal path. The IP cache path is more than 80 characters. If you experience issues with IP caching, please consider changing the IP cache to a location with a shorter path. Alternately consider using the OS subst command to map part of the path to a drive letter. 
+Current IP cache path is D:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.cache/ip 
+Command: link_design -top ecg_system_wrapper -part xc7z020clg400-1
+Design is defaulting to srcset: sources_1
+Design is defaulting to constrset: constrs_1
+INFO: [Device 21-403] Loading part xc7z020clg400-1
+INFO: [Project 1-5699] Read binary netlist with skipMacroContent - 1
+INFO: [Project 1-454] Reading design checkpoint 'd:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.gen/sources_1/bd/ecg_system/ip/ecg_system_conv_read_0/ecg_system_conv_read_0.dcp' for cell 'ecg_system_i/conv_read'
+INFO: [Project 1-454] Reading design checkpoint 'd:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.gen/sources_1/bd/ecg_system/ip/ecg_system_conv_write_0/ecg_system_conv_write_0.dcp' for cell 'ecg_system_i/conv_write'
+INFO: [Project 1-454] Reading design checkpoint 'd:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.gen/sources_1/bd/ecg_system/ip/ecg_system_ctrl_connect_0/ecg_system_ctrl_connect_0.dcp' for cell 'ecg_system_i/ctrl_connect'
+INFO: [Project 1-454] Reading design checkpoint 'd:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.gen/sources_1/bd/ecg_system/ip/ecg_system_ecg_conv_0_0/ecg_system_ecg_conv_0_0.dcp' for cell 'ecg_system_i/ecg_conv_0'
+INFO: [Project 1-454] Reading design checkpoint 'd:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.gen/sources_1/bd/ecg_system/ip/ecg_system_ecg_filter_0_0/ecg_system_ecg_filter_0_0.dcp' for cell 'ecg_system_i/ecg_filter_0'
+INFO: [Project 1-454] Reading design checkpoint 'd:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.gen/sources_1/bd/ecg_system/ip/ecg_system_ecg_io_0/ecg_system_ecg_io_0.dcp' for cell 'ecg_system_i/ecg_io'
+INFO: [Project 1-454] Reading design checkpoint 'd:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.gen/sources_1/bd/ecg_system/ip/ecg_system_hdmi_encoder_0/ecg_system_hdmi_encoder_0.dcp' for cell 'ecg_system_i/hdmi_encoder'
+INFO: [Project 1-454] Reading design checkpoint 'd:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.gen/sources_1/bd/ecg_system/ip/ecg_system_ps7_0/ecg_system_ps7_0.dcp' for cell 'ecg_system_i/ps7'
+INFO: [Project 1-454] Reading design checkpoint 'd:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.gen/sources_1/bd/ecg_system/ip/ecg_system_read_connect_0/ecg_system_read_connect_0.dcp' for cell 'ecg_system_i/read_connect'
+INFO: [Project 1-454] Reading design checkpoint 'd:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.gen/sources_1/bd/ecg_system/ip/ecg_system_reset_100m_0/ecg_system_reset_100m_0.dcp' for cell 'ecg_system_i/reset_100m'
+INFO: [Project 1-454] Reading design checkpoint 'd:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.gen/sources_1/bd/ecg_system/ip/ecg_system_reset_video_0/ecg_system_reset_video_0.dcp' for cell 'ecg_system_i/reset_video'
+INFO: [Project 1-454] Reading design checkpoint 'd:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.gen/sources_1/bd/ecg_system/ip/ecg_system_video_clocks_0/ecg_system_video_clocks_0.dcp' for cell 'ecg_system_i/video_clocks'
+INFO: [Project 1-454] Reading design checkpoint 'd:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.gen/sources_1/bd/ecg_system/ip/ecg_system_write_connect_0/ecg_system_write_connect_0.dcp' for cell 'ecg_system_i/write_connect'
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.259 . Memory (MB): peak = 1007.246 ; gain = 0.000
+INFO: [Netlist 29-17] Analyzing 2656 Unisim elements for replacement
+INFO: [Netlist 29-28] Unisim Transformation completed in 0 CPU seconds
+INFO: [Project 1-479] Netlist was created with Vivado 2026.1
+INFO: [Project 1-570] Preparing netlist for logic optimization
+Parsing XDC File [d:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.gen/sources_1/bd/ecg_system/ip/ecg_system_ps7_0/ecg_system_ps7_0.xdc] for cell 'ecg_system_i/ps7/inst'
+Finished Parsing XDC File [d:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.gen/sources_1/bd/ecg_system/ip/ecg_system_ps7_0/ecg_system_ps7_0.xdc] for cell 'ecg_system_i/ps7/inst'
+Parsing XDC File [d:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.gen/sources_1/bd/ecg_system/ip/ecg_system_ctrl_connect_0/bd_0/ip/ip_0/bd_420d_sc_ul_0_cdc.xdc] for cell 'ecg_system_i/ctrl_connect/inst/sc_ul/inst'
+WARNING: [Vivado_Tcl 4-921] Waiver ID 'CDC-7' -to list should not be empty. [d:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.gen/sources_1/bd/ecg_system/ip/ecg_system_ctrl_connect_0/bd_0/ip/ip_0/bd_420d_sc_ul_0_cdc.xdc:22]
+Finished Parsing XDC File [d:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.gen/sources_1/bd/ecg_system/ip/ecg_system_ctrl_connect_0/bd_0/ip/ip_0/bd_420d_sc_ul_0_cdc.xdc] for cell 'ecg_system_i/ctrl_connect/inst/sc_ul/inst'
+Parsing XDC File [d:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.gen/sources_1/bd/ecg_system/ip/ecg_system_ctrl_connect_0/smartconnect.xdc] for cell 'ecg_system_i/ctrl_connect/inst'
+Finished Parsing XDC File [d:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.gen/sources_1/bd/ecg_system/ip/ecg_system_ctrl_connect_0/smartconnect.xdc] for cell 'ecg_system_i/ctrl_connect/inst'
+Parsing XDC File [d:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.gen/sources_1/bd/ecg_system/ip/ecg_system_read_connect_0/bd_0/ip/ip_1/bd_d9cf_psr_aclk_0_board.xdc] for cell 'ecg_system_i/read_connect/inst/clk_map/psr_aclk/U0'
+Finished Parsing XDC File [d:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.gen/sources_1/bd/ecg_system/ip/ecg_system_read_connect_0/bd_0/ip/ip_1/bd_d9cf_psr_aclk_0_board.xdc] for cell 'ecg_system_i/read_connect/inst/clk_map/psr_aclk/U0'
+Parsing XDC File [d:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.gen/sources_1/bd/ecg_system/ip/ecg_system_read_connect_0/smartconnect.xdc] for cell 'ecg_system_i/read_connect/inst'
+Finished Parsing XDC File [d:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.gen/sources_1/bd/ecg_system/ip/ecg_system_read_connect_0/smartconnect.xdc] for cell 'ecg_system_i/read_connect/inst'
+Parsing XDC File [d:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.gen/sources_1/bd/ecg_system/ip/ecg_system_write_connect_0/bd_0/ip/ip_1/bd_00ce_psr_aclk_0_board.xdc] for cell 'ecg_system_i/write_connect/inst/clk_map/psr_aclk/U0'
+Finished Parsing XDC File [d:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.gen/sources_1/bd/ecg_system/ip/ecg_system_write_connect_0/bd_0/ip/ip_1/bd_00ce_psr_aclk_0_board.xdc] for cell 'ecg_system_i/write_connect/inst/clk_map/psr_aclk/U0'
+Parsing XDC File [d:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.gen/sources_1/bd/ecg_system/ip/ecg_system_write_connect_0/smartconnect.xdc] for cell 'ecg_system_i/write_connect/inst'
+Finished Parsing XDC File [d:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.gen/sources_1/bd/ecg_system/ip/ecg_system_write_connect_0/smartconnect.xdc] for cell 'ecg_system_i/write_connect/inst'
+Parsing XDC File [d:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.gen/sources_1/bd/ecg_system/ip/ecg_system_reset_100m_0/ecg_system_reset_100m_0_board.xdc] for cell 'ecg_system_i/reset_100m/U0'
+Finished Parsing XDC File [d:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.gen/sources_1/bd/ecg_system/ip/ecg_system_reset_100m_0/ecg_system_reset_100m_0_board.xdc] for cell 'ecg_system_i/reset_100m/U0'
+Parsing XDC File [d:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.gen/sources_1/bd/ecg_system/ip/ecg_system_video_clocks_0/ecg_system_video_clocks_0_board.xdc] for cell 'ecg_system_i/video_clocks/inst'
+Finished Parsing XDC File [d:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.gen/sources_1/bd/ecg_system/ip/ecg_system_video_clocks_0/ecg_system_video_clocks_0_board.xdc] for cell 'ecg_system_i/video_clocks/inst'
+Parsing XDC File [d:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.gen/sources_1/bd/ecg_system/ip/ecg_system_video_clocks_0/ecg_system_video_clocks_0.xdc] for cell 'ecg_system_i/video_clocks/inst'
+Finished Parsing XDC File [d:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.gen/sources_1/bd/ecg_system/ip/ecg_system_video_clocks_0/ecg_system_video_clocks_0.xdc] for cell 'ecg_system_i/video_clocks/inst'
+Parsing XDC File [d:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.gen/sources_1/bd/ecg_system/ip/ecg_system_hdmi_encoder_0/src/rgb2dvi.xdc] for cell 'ecg_system_i/hdmi_encoder/U0'
+Finished Parsing XDC File [d:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.gen/sources_1/bd/ecg_system/ip/ecg_system_hdmi_encoder_0/src/rgb2dvi.xdc] for cell 'ecg_system_i/hdmi_encoder/U0'
+Parsing XDC File [d:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.gen/sources_1/bd/ecg_system/ip/ecg_system_reset_video_0/ecg_system_reset_video_0_board.xdc] for cell 'ecg_system_i/reset_video/U0'
+Finished Parsing XDC File [d:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.gen/sources_1/bd/ecg_system/ip/ecg_system_reset_video_0/ecg_system_reset_video_0_board.xdc] for cell 'ecg_system_i/reset_video/U0'
+Parsing XDC File [d:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.gen/sources_1/bd/ecg_system/ip/ecg_system_conv_read_0/bd_0/ip/ip_1/bd_4517_psr_aclk_0_board.xdc] for cell 'ecg_system_i/conv_read/inst/clk_map/psr_aclk/U0'
+Finished Parsing XDC File [d:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.gen/sources_1/bd/ecg_system/ip/ecg_system_conv_read_0/bd_0/ip/ip_1/bd_4517_psr_aclk_0_board.xdc] for cell 'ecg_system_i/conv_read/inst/clk_map/psr_aclk/U0'
+Parsing XDC File [d:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.gen/sources_1/bd/ecg_system/ip/ecg_system_conv_read_0/smartconnect.xdc] for cell 'ecg_system_i/conv_read/inst'
+Finished Parsing XDC File [d:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.gen/sources_1/bd/ecg_system/ip/ecg_system_conv_read_0/smartconnect.xdc] for cell 'ecg_system_i/conv_read/inst'
+Parsing XDC File [d:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.gen/sources_1/bd/ecg_system/ip/ecg_system_conv_write_0/bd_0/ip/ip_1/bd_c1bb_psr_aclk_0_board.xdc] for cell 'ecg_system_i/conv_write/inst/clk_map/psr_aclk/U0'
+Finished Parsing XDC File [d:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.gen/sources_1/bd/ecg_system/ip/ecg_system_conv_write_0/bd_0/ip/ip_1/bd_c1bb_psr_aclk_0_board.xdc] for cell 'ecg_system_i/conv_write/inst/clk_map/psr_aclk/U0'
+Parsing XDC File [d:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.gen/sources_1/bd/ecg_system/ip/ecg_system_conv_write_0/smartconnect.xdc] for cell 'ecg_system_i/conv_write/inst'
+Finished Parsing XDC File [d:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.gen/sources_1/bd/ecg_system/ip/ecg_system_conv_write_0/smartconnect.xdc] for cell 'ecg_system_i/conv_write/inst'
+Parsing XDC File [D:/ecg_fpga/build/full_clean_20261104_run1/board/ads1292_pmoda.xdc]
+Finished Parsing XDC File [D:/ecg_fpga/build/full_clean_20261104_run1/board/ads1292_pmoda.xdc]
+Parsing XDC File [D:/ecg_fpga/build/full_clean_20261104_run1/board/scope_hdmi.xdc]
+INFO: [Timing 38-35] Done setting XDC timing constraints. [D:/ecg_fpga/build/full_clean_20261104_run1/board/scope_hdmi.xdc:25]
+Finished Parsing XDC File [D:/ecg_fpga/build/full_clean_20261104_run1/board/scope_hdmi.xdc]
+Parsing XDC File [D:/ecg_fpga/build/full_clean_20261104_run1/board/dual_view.xdc]
+Finished Parsing XDC File [D:/ecg_fpga/build/full_clean_20261104_run1/board/dual_view.xdc]
+Parsing XDC File [d:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.gen/sources_1/bd/ecg_system/ip/ecg_system_video_clocks_0/ecg_system_video_clocks_0_late.xdc] for cell 'ecg_system_i/video_clocks/inst'
+Finished Parsing XDC File [d:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.gen/sources_1/bd/ecg_system/ip/ecg_system_video_clocks_0/ecg_system_video_clocks_0_late.xdc] for cell 'ecg_system_i/video_clocks/inst'
+Parsing XDC File [d:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.gen/sources_1/bd/ecg_system/ip/ecg_system_hdmi_encoder_0/src/rgb2dvi_clocks.xdc] for cell 'ecg_system_i/hdmi_encoder/U0'
+Finished Parsing XDC File [d:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.gen/sources_1/bd/ecg_system/ip/ecg_system_hdmi_encoder_0/src/rgb2dvi_clocks.xdc] for cell 'ecg_system_i/hdmi_encoder/U0'
+INFO: [Project 1-1714] 59 XPM XDC files have been applied to the design.
+INFO: [Opt 31-138] Pushed 0 inverter(s) to 0 load pin(s).
+INFO: [Project 1-1687] 4 scoped IP constraints or related sub-commands were skipped due to synthesis logic optimizations usually triggered by constant connectivity or unconnected output pins. To review the skipped constraints and messages, run the command 'set_param netlist.IPMsgFiltering false' before opening the design.
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.018 . Memory (MB): peak = 1787.973 ; gain = 0.000
+INFO: [Project 1-111] Unisim Transformation Summary:
+  A total of 104 instances were transformed.
+  RAM16X1D => RAM32X1D (RAMD32(x2)): 2 instances
+  RAM32M => RAM32M (RAMD32(x6), RAMS32(x2)): 102 instances
+
+29 Infos, 2 Warnings, 0 Critical Warnings and 0 Errors encountered.
+link_design completed successfully
+link_design: Time (s): cpu = 00:00:21 ; elapsed = 00:00:24 . Memory (MB): peak = 1787.973 ; gain = 1131.684
+Command: opt_design
+Attempting to get a license for feature 'Vivado_Implementation' and/or device 'xc7z020'
+INFO: [Common 17-349] Got license for feature 'Vivado_Implementation' and/or device 'xc7z020'
+Running DRC as a precondition to command opt_design
+
+Starting DRC Task
+INFO: [DRC 23-27] Running DRC with 2 threads
+INFO: [Project 1-461] DRC finished with 0 Errors
+INFO: [Project 1-462] Please refer to the DRC report (report_drc) for more information.
+
+Time (s): cpu = 00:00:01 ; elapsed = 00:00:00.886 . Memory (MB): peak = 1787.973 ; gain = 0.000
+
+Starting Cache Timing Information Task
+INFO: [Timing 38-35] Done setting XDC timing constraints.
+Ending Cache Timing Information Task | Checksum: 2438e162b
+
+Time (s): cpu = 00:00:02 ; elapsed = 00:00:02 . Memory (MB): peak = 1787.973 ; gain = 0.000
+
+Starting Logic Optimization Task
+
+Phase 1 Initialization
+
+Phase 1.1 Core Generation And Design Setup
+Phase 1.1 Core Generation And Design Setup | Checksum: 2438e162b
+
+Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.032 . Memory (MB): peak = 2275.453 ; gain = 0.000
+
+Phase 1.2 Setup Constraints And Sort Netlist
+Phase 1.2 Setup Constraints And Sort Netlist | Checksum: 2438e162b
+
+Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.064 . Memory (MB): peak = 2275.453 ; gain = 0.000
+Phase 1 Initialization | Checksum: 2438e162b
+
+Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.068 . Memory (MB): peak = 2275.453 ; gain = 0.000
+
+Phase 2 Timer Update And Timing Data Collection
+
+Phase 2.1 Detect if minReqCache needed
+Phase 2.1 Detect if minReqCache needed | Checksum: 2438e162b
+
+Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.126 . Memory (MB): peak = 2277.676 ; gain = 2.223
+
+Phase 2.2 Timer Update
+Phase 2.2 Timer Update | Checksum: 2438e162b
+
+Time (s): cpu = 00:00:02 ; elapsed = 00:00:00.970 . Memory (MB): peak = 2277.676 ; gain = 2.223
+
+Phase 2.3 Timing Data Collection
+Phase 2.3 Timing Data Collection | Checksum: 2438e162b
+
+Time (s): cpu = 00:00:02 ; elapsed = 00:00:01 . Memory (MB): peak = 2277.676 ; gain = 2.223
+Phase 2 Timer Update And Timing Data Collection | Checksum: 2438e162b
+
+Time (s): cpu = 00:00:02 ; elapsed = 00:00:01 . Memory (MB): peak = 2277.676 ; gain = 2.223
+
+Phase 3 Retarget
+INFO: [Opt 31-1851] Number of loadless carry chains removed were: 0
+INFO: [Opt 31-1834] Total Chains To Be Transformed Were: 0 AND Number of Transformed insts Created are: 0
+INFO: [Opt 31-1566] Pulled 9 inverters resulting in an inversion of 64 pins
+INFO: [Opt 31-138] Pushed 32 inverter(s) to 245 load pin(s).
+INFO: [Opt 31-49] Retargeted 0 cell(s).
+Phase 3 Retarget | Checksum: 18a09dedc
+
+Time (s): cpu = 00:00:03 ; elapsed = 00:00:02 . Memory (MB): peak = 2277.676 ; gain = 2.223
+Retarget | Checksum: 18a09dedc
+INFO: [Opt 31-389] Phase Retarget created 226 cells and removed 306 cells
+INFO: [Opt 31-1021] In phase Retarget, 109 netlist objects are constrained preventing optimization. Please run opt_design with -debug_log to get more detail. 
+
+Phase 4 Constant propagation
+INFO: [Opt 31-138] Pushed 0 inverter(s) to 0 load pin(s).
+Phase 4 Constant propagation | Checksum: 158efd0e2
+
+Time (s): cpu = 00:00:03 ; elapsed = 00:00:02 . Memory (MB): peak = 2277.676 ; gain = 2.223
+Constant propagation | Checksum: 158efd0e2
+INFO: [Opt 31-389] Phase Constant propagation created 8 cells and removed 65 cells
+INFO: [Opt 31-1021] In phase Constant propagation, 108 netlist objects are constrained preventing optimization. Please run opt_design with -debug_log to get more detail. 
+
+Phase 5 Sweep
+INFO: [Constraints 18-11670] Building netlist checker database with flags, 0x8
+Done building netlist checker database: Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.025 . Memory (MB): peak = 2277.676 ; gain = 0.000
+INFO: [Constraints 18-11670] Building netlist checker database with flags, 0x8
+Done building netlist checker database: Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.024 . Memory (MB): peak = 2277.676 ; gain = 0.000
+Phase 5 Sweep | Checksum: 16af25dbd
+
+Time (s): cpu = 00:00:05 ; elapsed = 00:00:04 . Memory (MB): peak = 2277.676 ; gain = 2.223
+Sweep | Checksum: 16af25dbd
+INFO: [Opt 31-389] Phase Sweep created 0 cells and removed 972 cells
+INFO: [Opt 31-1021] In phase Sweep, 131 netlist objects are constrained preventing optimization. Please run opt_design with -debug_log to get more detail. 
+
+Phase 6 BUFG optimization
+Phase 6 BUFG optimization | Checksum: 16af25dbd
+
+Time (s): cpu = 00:00:05 ; elapsed = 00:00:04 . Memory (MB): peak = 2277.676 ; gain = 2.223
+BUFG optimization | Checksum: 16af25dbd
+INFO: [Opt 31-662] Phase BUFG optimization created 0 cells of which 0 are BUFGs and removed 0 cells.
+
+Phase 7 Shift Register Optimization
+INFO: [Opt 31-1064] SRL Remap converted 0 SRLs to 0 registers and converted 0 registers of register chains to 0 SRLs
+Phase 7 Shift Register Optimization | Checksum: 1b77eb289
+
+Time (s): cpu = 00:00:05 ; elapsed = 00:00:04 . Memory (MB): peak = 2277.676 ; gain = 2.223
+Shift Register Optimization | Checksum: 1b77eb289
+INFO: [Opt 31-389] Phase Shift Register Optimization created 2 cells and removed 0 cells
+
+Phase 8 Post Processing Netlist
+Phase 8 Post Processing Netlist | Checksum: 1d59cbc80
+
+Time (s): cpu = 00:00:05 ; elapsed = 00:00:04 . Memory (MB): peak = 2277.676 ; gain = 2.223
+Post Processing Netlist | Checksum: 1d59cbc80
+INFO: [Opt 31-389] Phase Post Processing Netlist created 0 cells and removed 0 cells
+INFO: [Opt 31-1021] In phase Post Processing Netlist, 48 netlist objects are constrained preventing optimization. Please run opt_design with -debug_log to get more detail. 
+
+Phase 9 Finalization
+
+Phase 9.1 Finalizing Design Cores and Updating Shapes
+Phase 9.1 Finalizing Design Cores and Updating Shapes | Checksum: 1b1f90dbb
+
+Time (s): cpu = 00:00:06 ; elapsed = 00:00:05 . Memory (MB): peak = 2277.676 ; gain = 2.223
+
+Phase 9.2 Verifying Netlist Connectivity
+
+Starting Connectivity Check Task
+
+Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.078 . Memory (MB): peak = 2277.676 ; gain = 0.000
+Phase 9.2 Verifying Netlist Connectivity | Checksum: 1b1f90dbb
+
+Time (s): cpu = 00:00:06 ; elapsed = 00:00:05 . Memory (MB): peak = 2277.676 ; gain = 2.223
+Phase 9 Finalization | Checksum: 1b1f90dbb
+
+Time (s): cpu = 00:00:06 ; elapsed = 00:00:05 . Memory (MB): peak = 2277.676 ; gain = 2.223
+Opt_design Change Summary
+=========================
+
+
+-------------------------------------------------------------------------------------------------------------------------
+|  Phase                        |  #Cells created  |  #Cells Removed  |  #Constrained objects preventing optimizations  |
+-------------------------------------------------------------------------------------------------------------------------
+|  Retarget                     |             226  |             306  |                                            109  |
+|  Constant propagation         |               8  |              65  |                                            108  |
+|  Sweep                        |               0  |             972  |                                            131  |
+|  BUFG optimization            |               0  |               0  |                                              0  |
+|  Shift Register Optimization  |               2  |               0  |                                              0  |
+|  Post Processing Netlist      |               0  |               0  |                                             48  |
+-------------------------------------------------------------------------------------------------------------------------
+
+
+Ending Logic Optimization Task | Checksum: 1b1f90dbb
+
+Time (s): cpu = 00:00:06 ; elapsed = 00:00:05 . Memory (MB): peak = 2277.676 ; gain = 2.223
+
+Starting Power Optimization Task
+INFO: [Pwropt 34-132] Skipping clock gating for clocks with a period < 2.00 ns.
+INFO: [Pwropt 34-9] Applying IDT optimizations ...
+INFO: [Pwropt 34-10] Applying ODC optimizations ...
+INFO: [Timing 38-35] Done setting XDC timing constraints.
+Running Vector-less Activity Propagation...
+
+Finished Running Vector-less Activity Propagation
+
+
+Starting PowerOpt Patch Enables Task
+INFO: [Pwropt 34-162] WRITE_MODE attribute of 0 BRAM(s) out of a total of 68 has been updated to save power. Run report_power_opt to get a complete listing of the BRAMs updated.
+INFO: [Pwropt 34-201] Structural ODC has moved 0 WE to EN ports
+Number of BRAM Ports augmented: 33 newly gated: 2 Total Ports: 136
+Ending PowerOpt Patch Enables Task | Checksum: 1a82a603e
+
+Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.287 . Memory (MB): peak = 2397.207 ; gain = 0.000
+Ending Power Optimization Task | Checksum: 1a82a603e
+
+Time (s): cpu = 00:00:12 ; elapsed = 00:00:08 . Memory (MB): peak = 2397.207 ; gain = 119.531
+
+Starting Final Cleanup Task
+Ending Final Cleanup Task | Checksum: 1a82a603e
+
+Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.005 . Memory (MB): peak = 2397.207 ; gain = 0.000
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.040 . Memory (MB): peak = 2397.207 ; gain = 0.000
+INFO: [Common 17-83] Releasing license: Vivado_Implementation
+60 Infos, 2 Warnings, 0 Critical Warnings and 0 Errors encountered.
+opt_design completed successfully
+opt_design: Time (s): cpu = 00:00:23 ; elapsed = 00:00:18 . Memory (MB): peak = 2397.207 ; gain = 609.234
+INFO: [Vivado 12-24828] Executing command : report_drc -file ecg_system_wrapper_drc_opted.rpt -pb ecg_system_wrapper_drc_opted.pb -rpx ecg_system_wrapper_drc_opted.rpx
+Command: report_drc -file ecg_system_wrapper_drc_opted.rpt -pb ecg_system_wrapper_drc_opted.pb -rpx ecg_system_wrapper_drc_opted.rpx
+INFO: [IP_Flow 19-1839] IP Catalog is up to date.
+INFO: [DRC 23-27] Running DRC with 2 threads
+INFO: [Vivado_Tcl 2-168] The results of DRC are in file D:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.runs/impl_1/ecg_system_wrapper_drc_opted.rpt.
+report_drc completed successfully
+INFO: [Timing 38-480] Writing timing data to binary archive.
+Wrote PlaceDB: Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 2397.207 ; gain = 0.000
+Wrote PulsedLatchDB: Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 2397.207 ; gain = 0.000
+Writing XDEF routing.
+Writing XDEF routing logical nets.
+Writing XDEF routing special nets.
+Wrote RouteStorage: Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.059 . Memory (MB): peak = 2397.207 ; gain = 0.000
+Write ShapeDB Complete: Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.073 . Memory (MB): peak = 2397.207 ; gain = 0.000
+Wrote PlaceStorage: Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.010 . Memory (MB): peak = 2397.207 ; gain = 0.000
+Wrote Netlist Cache: Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.002 . Memory (MB): peak = 2397.207 ; gain = 0.000
+Wrote Device Cache: Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.011 . Memory (MB): peak = 2397.207 ; gain = 0.000
+Write Physdb Complete: Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.098 . Memory (MB): peak = 2397.207 ; gain = 0.000
+INFO: [Common 17-1381] The checkpoint 'D:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.runs/impl_1/ecg_system_wrapper_opt.dcp' has been generated.
+Command: place_design
+Attempting to get a license for feature 'Vivado_Implementation' and/or device 'xc7z020'
+INFO: [Common 17-349] Got license for feature 'Vivado_Implementation' and/or device 'xc7z020'
+INFO: [Common 17-83] Releasing license: Vivado_Implementation
+INFO: [Timing 38-35] Done setting XDC timing constraints.
+Running DRC as a precondition to command place_design
+INFO: [DRC 23-27] Running DRC with 2 threads
+INFO: [Vivado_Tcl 4-198] DRC finished with 0 Errors, 8 Advisories
+INFO: [Vivado_Tcl 4-199] Please refer to the DRC report (report_drc) for more information.
+INFO: [Place 30-611] Multithreading enabled for place_design using a maximum of 2 CPUs
+
+Starting Placer Task
+
+Phase 1 Placer Initialization
+
+Phase 1.1 Placer Initialization Netlist Sorting
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.020 . Memory (MB): peak = 2397.207 ; gain = 0.000
+Phase 1.1 Placer Initialization Netlist Sorting | Checksum: d7be4047
+
+Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.032 . Memory (MB): peak = 2397.207 ; gain = 0.000
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.016 . Memory (MB): peak = 2397.207 ; gain = 0.000
+
+Phase 1.2 IO Placement/ Clock Placement/ Build Placer Device
+Phase 1.2 IO Placement/ Clock Placement/ Build Placer Device | Checksum: fb674e1f
+
+Time (s): cpu = 00:00:02 ; elapsed = 00:00:02 . Memory (MB): peak = 2397.207 ; gain = 0.000
+
+Phase 1.3 Build Placer Netlist Model
+Phase 1.3 Build Placer Netlist Model | Checksum: 1767efe5b
+
+Time (s): cpu = 00:00:12 ; elapsed = 00:00:09 . Memory (MB): peak = 2397.207 ; gain = 0.000
+
+Phase 1.4 Constrain Clocks/Macros
+Phase 1.4 Constrain Clocks/Macros | Checksum: 1767efe5b
+
+Time (s): cpu = 00:00:12 ; elapsed = 00:00:09 . Memory (MB): peak = 2397.207 ; gain = 0.000
+Phase 1 Placer Initialization | Checksum: 1767efe5b
+
+Time (s): cpu = 00:00:12 ; elapsed = 00:00:09 . Memory (MB): peak = 2397.207 ; gain = 0.000
+
+Phase 2 Global Placement
+
+Phase 2.1 Floorplanning
+Phase 2.1 Floorplanning | Checksum: 12bb98857
+
+Time (s): cpu = 00:00:17 ; elapsed = 00:00:12 . Memory (MB): peak = 2397.207 ; gain = 0.000
+
+Phase 2.2 Update Timing before SLR Path Opt
+Phase 2.2 Update Timing before SLR Path Opt | Checksum: fc0ca715
+
+Time (s): cpu = 00:00:21 ; elapsed = 00:00:14 . Memory (MB): peak = 2397.207 ; gain = 0.000
+
+Phase 2.3 Post-Processing in Floorplanning
+Phase 2.3 Post-Processing in Floorplanning | Checksum: fc0ca715
+
+Time (s): cpu = 00:00:21 ; elapsed = 00:00:14 . Memory (MB): peak = 2397.207 ; gain = 0.000
+
+Phase 2.4 Global Place Phase1
+Phase 2.4 Global Place Phase1 | Checksum: 219c49c56
+
+Time (s): cpu = 00:00:51 ; elapsed = 00:00:32 . Memory (MB): peak = 2397.207 ; gain = 0.000
+
+Phase 2.5 Global Place Phase2
+
+Phase 2.5.1 UpdateTiming Before Physical Synthesis
+Phase 2.5.1 UpdateTiming Before Physical Synthesis | Checksum: 1be8381a9
+
+Time (s): cpu = 00:00:54 ; elapsed = 00:00:35 . Memory (MB): peak = 2397.207 ; gain = 0.000
+
+Phase 2.5.2 Physical Synthesis In Placer
+INFO: [Physopt 32-1035] Found 0 LUTNM shape to break, 1665 LUT instances to create LUTNM shape
+INFO: [Physopt 32-1044] Break lutnm for timing: one critical 0, two critical 0, total 0, new lutff created 0
+INFO: [Physopt 32-1138] End 1 Pass. Optimized 734 nets or LUTs. Breaked 0 LUT, combined 734 existing LUTs and moved 0 existing LUT
+INFO: [Physopt 32-65] No nets found for high-fanout optimization.
+INFO: [Physopt 32-232] Optimized 0 net. Created 0 new instance.
+INFO: [Physopt 32-775] End 1 Pass. Optimized 0 net or cell. Created 0 new cell, deleted 0 existing cell and moved 0 existing cell
+INFO: [Physopt 32-456] No candidate cells for DSP register optimization found in the design.
+INFO: [Physopt 32-775] End 2 Pass. Optimized 0 net or cell. Created 0 new cell, deleted 0 existing cell and moved 0 existing cell
+INFO: [Physopt 32-1123] No candidate cells found for Shift Register to Pipeline optimization
+INFO: [Physopt 32-775] End 2 Pass. Optimized 0 net or cell. Created 0 new cell, deleted 0 existing cell and moved 0 existing cell
+INFO: [Physopt 32-1401] No candidate cells found for Shift Register optimization.
+INFO: [Physopt 32-677] No candidate cells for Shift Register optimization found in the design
+INFO: [Physopt 32-775] End 1 Pass. Optimized 0 net or cell. Created 0 new cell, deleted 0 existing cell and moved 0 existing cell
+INFO: [Physopt 32-526] No candidate cells for BRAM register optimization found in the design
+INFO: [Physopt 32-775] End 1 Pass. Optimized 0 net or cell. Created 0 new cell, deleted 0 existing cell and moved 0 existing cell
+INFO: [Physopt 32-846] No candidate cells for URAM register optimization found in the design
+INFO: [Physopt 32-775] End 1 Pass. Optimized 0 net or cell. Created 0 new cell, deleted 0 existing cell and moved 0 existing cell
+INFO: [Physopt 32-846] No candidate cells for URAM register optimization found in the design
+INFO: [Physopt 32-775] End 1 Pass. Optimized 0 net or cell. Created 0 new cell, deleted 0 existing cell and moved 0 existing cell
+INFO: [Physopt 32-949] No candidate nets found for dynamic/static region interface net replication
+INFO: [Physopt 32-775] End 1 Pass. Optimized 0 net or cell. Created 0 new cell, deleted 0 existing cell and moved 0 existing cell
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.021 . Memory (MB): peak = 2397.207 ; gain = 0.000
+
+Summary of Physical Synthesis Optimizations
+============================================
+
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------
+|  Optimization                                     |  Added Cells  |  Removed Cells  |  Optimized Cells/Nets  |  Dont Touch  |  Iterations  |  Elapsed   |
+-----------------------------------------------------------------------------------------------------------------------------------------------------------
+|  LUT Combining                                    |            0  |            734  |                   734  |           0  |           1  |  00:00:01  |
+|  Retime                                           |            0  |              0  |                     0  |           0  |           1  |  00:00:00  |
+|  Very High Fanout                                 |            0  |              0  |                     0  |           0  |           1  |  00:00:00  |
+|  DSP Register                                     |            0  |              0  |                     0  |           0  |           1  |  00:00:00  |
+|  Shift Register to Pipeline                       |            0  |              0  |                     0  |           0  |           1  |  00:00:00  |
+|  Shift Register                                   |            0  |              0  |                     0  |           0  |           1  |  00:00:00  |
+|  BRAM Register                                    |            0  |              0  |                     0  |           0  |           1  |  00:00:00  |
+|  URAM Register                                    |            0  |              0  |                     0  |           0  |           1  |  00:00:00  |
+|  Dynamic/Static Region Interface Net Replication  |            0  |              0  |                     0  |           0  |           1  |  00:00:00  |
+|  Total                                            |            0  |            734  |                   734  |           0  |           9  |  00:00:01  |
+-----------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+Phase 2.5.2 Physical Synthesis In Placer | Checksum: 1b3c59bd4
+
+Time (s): cpu = 00:00:59 ; elapsed = 00:00:38 . Memory (MB): peak = 2397.207 ; gain = 0.000
+Phase 2.5 Global Place Phase2 | Checksum: 1a039d0aa
+
+Time (s): cpu = 00:01:01 ; elapsed = 00:00:39 . Memory (MB): peak = 2397.207 ; gain = 0.000
+Phase 2 Global Placement | Checksum: 1a039d0aa
+
+Time (s): cpu = 00:01:01 ; elapsed = 00:00:39 . Memory (MB): peak = 2397.207 ; gain = 0.000
+
+Phase 3 Detail Placement
+
+Phase 3.1 Commit Multi Column Macros
+Phase 3.1 Commit Multi Column Macros | Checksum: 17828cc42
+
+Time (s): cpu = 00:01:05 ; elapsed = 00:00:41 . Memory (MB): peak = 2397.207 ; gain = 0.000
+
+Phase 3.2 Commit Most Macros & LUTRAMs
+Phase 3.2 Commit Most Macros & LUTRAMs | Checksum: 113e2a454
+
+Time (s): cpu = 00:01:11 ; elapsed = 00:00:45 . Memory (MB): peak = 2397.207 ; gain = 0.000
+
+Phase 3.3 Area Swap Optimization
+Phase 3.3 Area Swap Optimization | Checksum: 109b90a6f
+
+Time (s): cpu = 00:01:11 ; elapsed = 00:00:46 . Memory (MB): peak = 2397.207 ; gain = 0.000
+
+Phase 3.4 Pipeline Register Optimization
+Phase 3.4 Pipeline Register Optimization | Checksum: 126dc2f07
+
+Time (s): cpu = 00:01:11 ; elapsed = 00:00:46 . Memory (MB): peak = 2397.207 ; gain = 0.000
+
+Phase 3.5 Fast Optimization
+Phase 3.5 Fast Optimization | Checksum: 1d5824973
+
+Time (s): cpu = 00:01:18 ; elapsed = 00:00:50 . Memory (MB): peak = 2397.207 ; gain = 0.000
+
+Phase 3.6 Small Shape Detail Placement
+Phase 3.6 Small Shape Detail Placement | Checksum: 1fcb6856b
+
+Time (s): cpu = 00:01:26 ; elapsed = 00:00:58 . Memory (MB): peak = 2397.207 ; gain = 0.000
+
+Phase 3.7 Re-assign LUT pins
+Phase 3.7 Re-assign LUT pins | Checksum: 1d13f32fc
+
+Time (s): cpu = 00:01:27 ; elapsed = 00:01:00 . Memory (MB): peak = 2397.207 ; gain = 0.000
+
+Phase 3.8 Pipeline Register Optimization
+Phase 3.8 Pipeline Register Optimization | Checksum: 2383a93c3
+
+Time (s): cpu = 00:01:27 ; elapsed = 00:01:00 . Memory (MB): peak = 2397.207 ; gain = 0.000
+
+Phase 3.9 Fast Optimization
+Phase 3.9 Fast Optimization | Checksum: 2053f3a53
+
+Time (s): cpu = 00:01:37 ; elapsed = 00:01:05 . Memory (MB): peak = 2397.207 ; gain = 0.000
+Phase 3 Detail Placement | Checksum: 2053f3a53
+
+Time (s): cpu = 00:01:37 ; elapsed = 00:01:05 . Memory (MB): peak = 2397.207 ; gain = 0.000
+
+Phase 4 Post Placement Optimization and Clean-Up
+
+Phase 4.1 Post Commit Optimization
+INFO: [Timing 38-35] Done setting XDC timing constraints.
+
+Phase 4.1.1 Post Placement Optimization
+Post Placement Optimization Initialization | Checksum: 196154a0e
+
+Phase 4.1.1.1 BUFG Insertion
+
+Starting Physical Synthesis Task
+
+Phase 1 Physical Synthesis Initialization
+INFO: [Physopt 32-721] Multithreading enabled for phys_opt_design using a maximum of 2 CPUs
+INFO: [Physopt 32-619] Estimated Timing Summary | WNS=-0.389 | TNS=-2.341 |
+Phase 1 Physical Synthesis Initialization | Checksum: 12f2017bd
+
+Time (s): cpu = 00:00:01 ; elapsed = 00:00:00.661 . Memory (MB): peak = 2397.207 ; gain = 0.000
+INFO: [Place 46-33] Processed net ecg_system_i/ecg_conv_0/inst/grp_ecg_conv_Pipeline_dot_fu_578/flow_control_loop_pipe_sequential_init_U/ap_loop_init, BUFG insertion was skipped due to placement/routing conflicts.
+INFO: [Place 46-33] Processed net ecg_system_i/ecg_conv_0/inst/gmem1_m_axi_U/bus_write/wreq_burst_conv/burst_sequential/rs_req/ap_rst_n_0, BUFG insertion was skipped due to placement/routing conflicts.
+INFO: [Place 46-33] Processed net ecg_system_i/ecg_filter_0/inst/gmem1_m_axi_U/bus_write/wreq_burst_conv/burst_sequential/rs_req/ap_rst_n_0, BUFG insertion was skipped due to placement/routing conflicts.
+INFO: [Place 46-56] BUFG insertion identified 3 candidate nets. Inserted BUFG: 0, Replicated BUFG Driver: 0, Skipped due to Placement/Routing Conflicts: 3, Skipped due to Timing Degradation: 0, Skipped due to netlist editing failed: 0.
+Ending Physical Synthesis Task | Checksum: 1dcfd3a75
+
+Time (s): cpu = 00:00:02 ; elapsed = 00:00:00.995 . Memory (MB): peak = 2397.207 ; gain = 0.000
+Phase 4.1.1.1 BUFG Insertion | Checksum: 196154a0e
+
+Time (s): cpu = 00:01:47 ; elapsed = 00:01:12 . Memory (MB): peak = 2397.207 ; gain = 0.000
+
+Phase 4.1.1.2 Post Placement Timing Optimization
+INFO: [Place 30-746] Post Placement Timing Summary WNS=-0.098. For the most accurate timing information please run report_timing.
+Phase 4.1.1.2 Post Placement Timing Optimization | Checksum: 1356889c6
+
+Time (s): cpu = 00:02:01 ; elapsed = 00:01:23 . Memory (MB): peak = 2397.207 ; gain = 0.000
+
+Time (s): cpu = 00:02:01 ; elapsed = 00:01:23 . Memory (MB): peak = 2397.207 ; gain = 0.000
+Phase 4.1 Post Commit Optimization | Checksum: 1356889c6
+
+Time (s): cpu = 00:02:01 ; elapsed = 00:01:23 . Memory (MB): peak = 2397.207 ; gain = 0.000
+
+Phase 4.2 Post Placement Cleanup
+Phase 4.2 Post Placement Cleanup | Checksum: 1356889c6
+
+Time (s): cpu = 00:02:02 ; elapsed = 00:01:24 . Memory (MB): peak = 2397.207 ; gain = 0.000
+
+Phase 4.3 Placer Reporting
+
+Phase 4.3.1 Print Estimated Congestion
+INFO: [Place 30-612] Post-Placement Estimated Congestion 
+ ____________________________________________________
+|           | Global Congestion | Short Congestion  |
+| Direction | Region Size       | Region Size       |
+|___________|___________________|___________________|
+|      North|                1x1|                4x4|
+|___________|___________________|___________________|
+|      South|                1x1|                2x2|
+|___________|___________________|___________________|
+|       East|                1x1|                1x1|
+|___________|___________________|___________________|
+|       West|                1x1|                1x1|
+|___________|___________________|___________________|
+
+Phase 4.3.1 Print Estimated Congestion | Checksum: 1356889c6
+
+Time (s): cpu = 00:02:02 ; elapsed = 00:01:24 . Memory (MB): peak = 2397.207 ; gain = 0.000
+Phase 4.3 Placer Reporting | Checksum: 1356889c6
+
+Time (s): cpu = 00:02:02 ; elapsed = 00:01:24 . Memory (MB): peak = 2397.207 ; gain = 0.000
+
+Phase 4.4 Final Placement Cleanup
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.022 . Memory (MB): peak = 2397.207 ; gain = 0.000
+
+Time (s): cpu = 00:02:02 ; elapsed = 00:01:24 . Memory (MB): peak = 2397.207 ; gain = 0.000
+Phase 4 Post Placement Optimization and Clean-Up | Checksum: 10cf11545
+
+Time (s): cpu = 00:02:02 ; elapsed = 00:01:24 . Memory (MB): peak = 2397.207 ; gain = 0.000
+Ending Placer Task | Checksum: 7e57a4fa
+
+Time (s): cpu = 00:02:02 ; elapsed = 00:01:24 . Memory (MB): peak = 2397.207 ; gain = 0.000
+103 Infos, 2 Warnings, 0 Critical Warnings and 0 Errors encountered.
+place_design completed successfully
+place_design: Time (s): cpu = 00:02:06 ; elapsed = 00:01:28 . Memory (MB): peak = 2397.207 ; gain = 0.000
+INFO: [Vivado 12-24838] Running report commands "report_control_sets, report_io, report_utilization" in parallel.
+Running report generation with 2 threads.
+INFO: [Vivado 12-24828] Executing command : report_io -file ecg_system_wrapper_io_placed.rpt
+report_io: Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.075 . Memory (MB): peak = 2397.207 ; gain = 0.000
+INFO: [Vivado 12-24828] Executing command : report_control_sets -verbose -file ecg_system_wrapper_control_sets_placed.rpt
+report_control_sets: Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.086 . Memory (MB): peak = 2397.207 ; gain = 0.000
+INFO: [Vivado 12-24828] Executing command : report_utilization -file ecg_system_wrapper_utilization_placed.rpt -pb ecg_system_wrapper_utilization_placed.pb
+INFO: [Timing 38-480] Writing timing data to binary archive.
+Wrote PlaceDB: Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 2397.207 ; gain = 0.000
+Wrote PulsedLatchDB: Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 2397.207 ; gain = 0.000
+Writing XDEF routing.
+Writing XDEF routing logical nets.
+Writing XDEF routing special nets.
+Wrote RouteStorage: Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.057 . Memory (MB): peak = 2397.207 ; gain = 0.000
+Write ShapeDB Complete: Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.101 . Memory (MB): peak = 2397.207 ; gain = 0.000
+Wrote PlaceStorage: Time (s): cpu = 00:00:03 ; elapsed = 00:00:00.865 . Memory (MB): peak = 2397.207 ; gain = 0.000
+Wrote Netlist Cache: Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.050 . Memory (MB): peak = 2397.207 ; gain = 0.000
+Wrote Device Cache: Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.012 . Memory (MB): peak = 2397.207 ; gain = 0.000
+Write Physdb Complete: Time (s): cpu = 00:00:03 ; elapsed = 00:00:01 . Memory (MB): peak = 2397.207 ; gain = 0.000
+INFO: [Common 17-1381] The checkpoint 'D:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.runs/impl_1/ecg_system_wrapper_placed.dcp' has been generated.
+Command: phys_opt_design
+Attempting to get a license for feature 'Vivado_Implementation' and/or device 'xc7z020'
+INFO: [Common 17-349] Got license for feature 'Vivado_Implementation' and/or device 'xc7z020'
+
+Starting Initial Update Timing Task
+
+Time (s): cpu = 00:00:07 ; elapsed = 00:00:04 . Memory (MB): peak = 2397.207 ; gain = 0.000
+INFO: [Vivado_Tcl 4-1435] PhysOpt_Tcl_Interface Runtime Before Starting Physical Synthesis Task | CPU: 7.00s |  WALL: 4.41s
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.022 . Memory (MB): peak = 2397.207 ; gain = 0.000
+
+Starting Physical Synthesis Task
+
+Phase 1 Physical Synthesis Initialization
+INFO: [Physopt 32-721] Multithreading enabled for phys_opt_design using a maximum of 2 CPUs
+INFO: [Physopt 32-619] Estimated Timing Summary | WNS=-0.098 | TNS=-0.101 |
+Phase 1 Physical Synthesis Initialization | Checksum: 102937d47
+
+Time (s): cpu = 00:00:04 ; elapsed = 00:00:03 . Memory (MB): peak = 2397.207 ; gain = 0.000
+INFO: [Physopt 32-619] Estimated Timing Summary | WNS=-0.098 | TNS=-0.101 |
+
+Phase 2 DSP Register Optimization
+INFO: [Physopt 32-456] No candidate cells for DSP register optimization found in the design.
+INFO: [Physopt 32-775] End 2 Pass. Optimized 0 net or cell. Created 0 new cell, deleted 0 existing cell and moved 0 existing cell
+Phase 2 DSP Register Optimization | Checksum: 102937d47
+
+Time (s): cpu = 00:00:04 ; elapsed = 00:00:03 . Memory (MB): peak = 2397.207 ; gain = 0.000
+
+Phase 3 Critical Path Optimization
+INFO: [Physopt 32-619] Estimated Timing Summary | WNS=-0.098 | TNS=-0.101 |
+INFO: [Physopt 32-702] Processed net ecg_system_i/ecg_filter_0/inst/grp_ecg_filter_sample_fu_546/reg_408_reg_n_3_[41]. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net ecg_system_i/ps7/inst/FCLK_CLK_unbuffered[0]. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net ecg_system_i/ecg_filter_0/inst/grp_ecg_filter_sample_fu_546/reg_408_reg[39]_i_1_n_3. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net ecg_system_i/ecg_filter_0/inst/grp_ecg_filter_sample_fu_546/reg_408_reg[35]_i_1_n_3. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net ecg_system_i/ecg_filter_0/inst/grp_ecg_filter_sample_fu_546/reg_408_reg[31]_i_1_n_3. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net ecg_system_i/ecg_filter_0/inst/grp_ecg_filter_sample_fu_546/reg_408_reg[27]_i_1_n_3. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net ecg_system_i/ecg_filter_0/inst/grp_ecg_filter_sample_fu_546/reg_408_reg[23]_i_1_n_3. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net ecg_system_i/ecg_filter_0/inst/grp_ecg_filter_sample_fu_546/reg_408_reg[19]_i_1_n_3. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net ecg_system_i/ecg_filter_0/inst/grp_ecg_filter_sample_fu_546/reg_408_reg[15]_i_1_n_3. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net ecg_system_i/ecg_filter_0/inst/grp_ecg_filter_sample_fu_546/reg_408_reg[11]_i_1_n_3. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net ecg_system_i/ecg_filter_0/inst/grp_ecg_filter_sample_fu_546/reg_408_reg[7]_i_1_n_3. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-702] Processed net ecg_system_i/ecg_filter_0/inst/grp_ecg_filter_sample_fu_546/reg_408_reg[3]_i_1_n_3. Optimizations did not improve timing on the net.
+INFO: [Physopt 32-608] Optimized 1 net.  Swapped 26 pins.
+INFO: [Physopt 32-735] Processed net ecg_system_i/ecg_filter_0/inst/grp_ecg_filter_sample_fu_546/reg_408[3]_i_8_n_3. Optimization improves timing on the net.
+INFO: [Physopt 32-619] Estimated Timing Summary | WNS=0.004 | TNS=0.000 |
+INFO: [Physopt 32-619] Estimated Timing Summary | WNS=0.004 | TNS=0.000 |
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.023 . Memory (MB): peak = 2397.207 ; gain = 0.000
+Phase 3 Critical Path Optimization | Checksum: 102937d47
+
+Time (s): cpu = 00:00:05 ; elapsed = 00:00:03 . Memory (MB): peak = 2397.207 ; gain = 0.000
+
+Phase 4 Critical Path Optimization
+INFO: [Physopt 32-619] Estimated Timing Summary | WNS=0.004 | TNS=0.000 |
+INFO: [Physopt 32-619] Estimated Timing Summary | WNS=0.004 | TNS=0.000 |
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.021 . Memory (MB): peak = 2397.207 ; gain = 0.000
+Phase 4 Critical Path Optimization | Checksum: 102937d47
+
+Time (s): cpu = 00:00:05 ; elapsed = 00:00:03 . Memory (MB): peak = 2397.207 ; gain = 0.000
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.020 . Memory (MB): peak = 2397.207 ; gain = 0.000
+INFO: [Physopt 32-603] Post Physical Optimization Timing Summary | WNS=0.004 | TNS=0.000 |
+
+Summary of Physical Synthesis Optimizations
+============================================
+
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+|  Optimization   |  WNS Gain (ns)  |  TNS Gain (ns)  |  Added Cells  |  Removed Cells  |  Optimized Cells/Nets  |  Dont Touch  |  Iterations  |  Elapsed   |
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+|  DSP Register   |          0.000  |          0.000  |            0  |              0  |                     0  |           0  |           1  |  00:00:00  |
+|  Critical Path  |          0.102  |          0.101  |            0  |              0  |                     1  |           0  |           2  |  00:00:00  |
+|  Total          |          0.102  |          0.101  |            0  |              0  |                     1  |           0  |           3  |  00:00:00  |
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.020 . Memory (MB): peak = 2397.207 ; gain = 0.000
+Ending Physical Synthesis Task | Checksum: 13988df16
+
+Time (s): cpu = 00:00:05 ; elapsed = 00:00:03 . Memory (MB): peak = 2397.207 ; gain = 0.000
+INFO: [Common 17-83] Releasing license: Vivado_Implementation
+137 Infos, 2 Warnings, 0 Critical Warnings and 0 Errors encountered.
+phys_opt_design completed successfully
+phys_opt_design: Time (s): cpu = 00:00:12 ; elapsed = 00:00:08 . Memory (MB): peak = 2397.207 ; gain = 0.000
+INFO: [Timing 38-480] Writing timing data to binary archive.
+Wrote PlaceDB: Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 2397.207 ; gain = 0.000
+Wrote PulsedLatchDB: Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 2397.207 ; gain = 0.000
+Writing XDEF routing.
+Writing XDEF routing logical nets.
+Writing XDEF routing special nets.
+Wrote RouteStorage: Time (s): cpu = 00:00:01 ; elapsed = 00:00:00.058 . Memory (MB): peak = 2397.207 ; gain = 0.000
+Write ShapeDB Complete: Time (s): cpu = 00:00:01 ; elapsed = 00:00:00.077 . Memory (MB): peak = 2397.207 ; gain = 0.000
+Wrote PlaceStorage: Time (s): cpu = 00:00:02 ; elapsed = 00:00:00.904 . Memory (MB): peak = 2397.207 ; gain = 0.000
+Wrote Netlist Cache: Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.053 . Memory (MB): peak = 2397.207 ; gain = 0.000
+Wrote Device Cache: Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.012 . Memory (MB): peak = 2397.207 ; gain = 0.000
+Write Physdb Complete: Time (s): cpu = 00:00:04 ; elapsed = 00:00:01 . Memory (MB): peak = 2397.207 ; gain = 0.000
+INFO: [Common 17-1381] The checkpoint 'D:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.runs/impl_1/ecg_system_wrapper_physopt.dcp' has been generated.
+Command: route_design
+Attempting to get a license for feature 'Vivado_Implementation' and/or device 'xc7z020'
+INFO: [Common 17-349] Got license for feature 'Vivado_Implementation' and/or device 'xc7z020'
+
+
+Starting Routing Task
+INFO: [Route 35-254] Multithreading enabled for route_design using a maximum of 2 CPUs
+
+Phase 1 Build RT Design
+Checksum: PlaceDB: 5ee5baad ConstDB: 0 ShapeSum: 3a69cfd6 RouteDB: 15f972f0
+Post Restoration Checksum: NetGraph: afb32648 | NumContArr: 566d5975 | Constraints: c2a8fa9d | Timing: c2a8fa9d
+Phase 1 Build RT Design | Checksum: 28b7274f7
+
+Time (s): cpu = 00:00:24 ; elapsed = 00:00:18 . Memory (MB): peak = 2397.207 ; gain = 0.000
+
+Phase 2 Router Initialization
+
+Phase 2.1 Fix Topology Constraints
+Phase 2.1 Fix Topology Constraints | Checksum: 28b7274f7
+
+Time (s): cpu = 00:00:24 ; elapsed = 00:00:18 . Memory (MB): peak = 2397.207 ; gain = 0.000
+
+Phase 2.2 Pre Route Cleanup
+Phase 2.2 Pre Route Cleanup | Checksum: 28b7274f7
+
+Time (s): cpu = 00:00:24 ; elapsed = 00:00:18 . Memory (MB): peak = 2397.207 ; gain = 0.000
+ Number of Nodes with overlaps = 0
+
+Phase 2.3 Update Timing
+Phase 2.3 Update Timing | Checksum: 1b2b76246
+
+Time (s): cpu = 00:00:34 ; elapsed = 00:00:25 . Memory (MB): peak = 2397.207 ; gain = 0.000
+INFO: [Route 35-416] Intermediate Timing Summary | WNS=-0.082 | TNS=-0.082 | WHS=-0.311 | THS=-419.651|
+
+
+Phase 2.4 Soft Constraint Pins - Fast Budgeting
+Phase 2.4 Soft Constraint Pins - Fast Budgeting | Checksum: 163e01c06
+
+Time (s): cpu = 00:00:40 ; elapsed = 00:00:28 . Memory (MB): peak = 2491.273 ; gain = 94.066
+
+Router Utilization Summary
+  Global Vertical Routing Utilization    = 0 %
+  Global Horizontal Routing Utilization  = 0 %
+  Routable Net Status*
+  *Does not include unroutable nets such as driverless and loadless.
+  Run report_route_status for detailed report.
+  Number of Failed Nets               = 34783
+    (Failed Nets is the sum of unrouted and partially routed nets)
+  Number of Unrouted Nets             = 34783
+  Number of Partially Routed Nets     = 0
+  Number of Node Overlaps             = 0
+
+Phase 2 Router Initialization | Checksum: 19910f5e7
+
+Time (s): cpu = 00:00:40 ; elapsed = 00:00:28 . Memory (MB): peak = 2491.273 ; gain = 94.066
+
+Phase 3 Global Routing
+Phase 3 Global Routing | Checksum: 19910f5e7
+
+Time (s): cpu = 00:00:40 ; elapsed = 00:00:29 . Memory (MB): peak = 2491.273 ; gain = 94.066
+
+Phase 4 Initial Routing
+
+Phase 4.1 Initial Net Routing Pass
+Phase 4.1 Initial Net Routing Pass | Checksum: 24310e78c
+
+Time (s): cpu = 00:00:50 ; elapsed = 00:00:34 . Memory (MB): peak = 2491.273 ; gain = 94.066
+Phase 4 Initial Routing | Checksum: 24310e78c
+
+Time (s): cpu = 00:00:50 ; elapsed = 00:00:34 . Memory (MB): peak = 2491.273 ; gain = 94.066
+
+Phase 5 Rip-up And Reroute
+
+Phase 5.1 Global Iteration 0
+ Number of Nodes with overlaps = 3040
+ Number of Nodes with overlaps = 305
+ Number of Nodes with overlaps = 107
+ Number of Nodes with overlaps = 37
+ Number of Nodes with overlaps = 25
+ Number of Nodes with overlaps = 10
+ Number of Nodes with overlaps = 3
+ Number of Nodes with overlaps = 6
+ Number of Nodes with overlaps = 1
+ Number of Nodes with overlaps = 0
+INFO: [Route 35-416] Intermediate Timing Summary | WNS=-0.323 | TNS=-1.548 | WHS=N/A    | THS=N/A    |
+
+Phase 5.1 Global Iteration 0 | Checksum: 2483f2edd
+
+Time (s): cpu = 00:01:14 ; elapsed = 00:00:52 . Memory (MB): peak = 2501.477 ; gain = 104.270
+
+Phase 5.2 Global Iteration 1
+ Number of Nodes with overlaps = 171
+ Number of Nodes with overlaps = 71
+ Number of Nodes with overlaps = 43
+ Number of Nodes with overlaps = 16
+ Number of Nodes with overlaps = 4
+ Number of Nodes with overlaps = 3
+ Number of Nodes with overlaps = 2
+ Number of Nodes with overlaps = 2
+ Number of Nodes with overlaps = 0
+INFO: [Route 35-416] Intermediate Timing Summary | WNS=-0.335 | TNS=-1.668 | WHS=N/A    | THS=N/A    |
+
+Phase 5.2 Global Iteration 1 | Checksum: 1b13efb11
+
+Time (s): cpu = 00:01:21 ; elapsed = 00:00:58 . Memory (MB): peak = 2501.477 ; gain = 104.270
+Phase 5 Rip-up And Reroute | Checksum: 1b13efb11
+
+Time (s): cpu = 00:01:21 ; elapsed = 00:00:58 . Memory (MB): peak = 2501.477 ; gain = 104.270
+
+Phase 6 Delay and Skew Optimization
+
+Phase 6.1 Delay CleanUp
+
+Phase 6.1.1 Update Timing
+Phase 6.1.1 Update Timing | Checksum: 18f080f87
+
+Time (s): cpu = 00:01:23 ; elapsed = 00:00:59 . Memory (MB): peak = 2501.477 ; gain = 104.270
+INFO: [Route 35-416] Intermediate Timing Summary | WNS=-0.208 | TNS=-0.586 | WHS=N/A    | THS=N/A    |
+
+ Number of Nodes with overlaps = 0
+Phase 6.1 Delay CleanUp | Checksum: 192776fab
+
+Time (s): cpu = 00:01:23 ; elapsed = 00:01:00 . Memory (MB): peak = 2501.477 ; gain = 104.270
+
+Phase 6.2 Clock Skew Optimization
+Phase 6.2 Clock Skew Optimization | Checksum: 192776fab
+
+Time (s): cpu = 00:01:23 ; elapsed = 00:01:00 . Memory (MB): peak = 2501.477 ; gain = 104.270
+Phase 6 Delay and Skew Optimization | Checksum: 192776fab
+
+Time (s): cpu = 00:01:23 ; elapsed = 00:01:00 . Memory (MB): peak = 2501.477 ; gain = 104.270
+
+Phase 7 Post Hold Fix
+
+Phase 7.1 Hold Fix Iter
+INFO: [Route 35-416] Intermediate Timing Summary | WNS=-0.145 | TNS=-0.271 | WHS=-0.023 | THS=-0.030 |
+
+Phase 7.1 Hold Fix Iter | Checksum: 298d80467
+
+Time (s): cpu = 00:01:25 ; elapsed = 00:01:01 . Memory (MB): peak = 2501.477 ; gain = 104.270
+
+Phase 7.2 Non Free Resource Hold Fix Iter
+Phase 7.2 Non Free Resource Hold Fix Iter | Checksum: 2da5d82cc
+
+Time (s): cpu = 00:01:25 ; elapsed = 00:01:01 . Memory (MB): peak = 2501.477 ; gain = 104.270
+Phase 7 Post Hold Fix | Checksum: 2da5d82cc
+
+Time (s): cpu = 00:01:26 ; elapsed = 00:01:01 . Memory (MB): peak = 2501.477 ; gain = 104.270
+
+Phase 8 Route finalize
+
+Router Utilization Summary
+  Global Vertical Routing Utilization    = 8.04173 %
+  Global Horizontal Routing Utilization  = 11.199 %
+  Routable Net Status*
+  *Does not include unroutable nets such as driverless and loadless.
+  Run report_route_status for detailed report.
+  Number of Failed Nets               = 0
+    (Failed Nets is the sum of unrouted and partially routed nets)
+  Number of Unrouted Nets             = 0
+  Number of Partially Routed Nets     = 0
+  Number of Node Overlaps             = 0
+
+
+--GLOBAL Congestion:
+Utilization threshold used for congestion level computation: 0.85
+Congestion Report
+North Dir 1x1 Area, Max Cong = 61.2613%, No Congested Regions.
+South Dir 1x1 Area, Max Cong = 69.3694%, No Congested Regions.
+East Dir 1x1 Area, Max Cong = 79.4118%, No Congested Regions.
+West Dir 1x1 Area, Max Cong = 69.1176%, No Congested Regions.
+
+------------------------------
+Reporting congestion hotspots
+------------------------------
+Direction: North
+----------------
+Congested clusters found at Level 0
+Effective congestion level: 0 Aspect Ratio: 1 Sparse Ratio: 0
+Direction: South
+----------------
+Congested clusters found at Level 0
+Effective congestion level: 0 Aspect Ratio: 1 Sparse Ratio: 0
+Direction: East
+----------------
+Congested clusters found at Level 0
+Effective congestion level: 0 Aspect Ratio: 1 Sparse Ratio: 0
+Direction: West
+----------------
+Congested clusters found at Level 0
+Effective congestion level: 0 Aspect Ratio: 1 Sparse Ratio: 0
+
+Phase 8 Route finalize | Checksum: 2da5d82cc
+
+Time (s): cpu = 00:01:26 ; elapsed = 00:01:01 . Memory (MB): peak = 2501.477 ; gain = 104.270
+
+Phase 9 Verifying routed nets
+
+ Verification completed successfully
+Phase 9 Verifying routed nets | Checksum: 2da5d82cc
+
+Time (s): cpu = 00:01:26 ; elapsed = 00:01:01 . Memory (MB): peak = 2501.477 ; gain = 104.270
+
+Phase 10 Depositing Routes
+Phase 10 Depositing Routes | Checksum: 24aaf42fb
+
+Time (s): cpu = 00:01:28 ; elapsed = 00:01:03 . Memory (MB): peak = 2501.477 ; gain = 104.270
+
+Phase 11 Post Process Routing
+Phase 11 Post Process Routing | Checksum: 24aaf42fb
+
+Time (s): cpu = 00:01:29 ; elapsed = 00:01:03 . Memory (MB): peak = 2501.477 ; gain = 104.270
+
+Phase 12 Post Router Timing
+
+Phase 12.1 Update Timing
+Phase 12.1 Update Timing | Checksum: 24aaf42fb
+
+Time (s): cpu = 00:01:30 ; elapsed = 00:01:04 . Memory (MB): peak = 2501.477 ; gain = 104.270
+INFO: [Route 35-57] Estimated Timing Summary | WNS=-0.145 | TNS=-0.271 | WHS=0.050  | THS=0.000  |
+
+WARNING: [Route 35-328] Router estimated timing not met.
+Resolution: For a complete and accurate timing signoff, report_timing_summary must be run after route_design. Alternatively, route_design can be run with the -timing_summary option to enable a complete timing signoff at the end of route_design.
+Phase 12 Post Router Timing | Checksum: 24aaf42fb
+
+Time (s): cpu = 00:01:30 ; elapsed = 00:01:04 . Memory (MB): peak = 2501.477 ; gain = 104.270
+Total Elapsed time in route_design: 64.292 secs
+
+Phase 13 Post-Route Event Processing
+Phase 13 Post-Route Event Processing | Checksum: 15bf530dd
+
+Time (s): cpu = 00:01:30 ; elapsed = 00:01:04 . Memory (MB): peak = 2501.477 ; gain = 104.270
+INFO: [Route 35-16] Router Completed Successfully
+Ending Routing Task | Checksum: 15bf530dd
+
+Time (s): cpu = 00:01:31 ; elapsed = 00:01:05 . Memory (MB): peak = 2501.477 ; gain = 104.270
+
+Routing Is Done.
+INFO: [Common 17-83] Releasing license: Vivado_Implementation
+149 Infos, 3 Warnings, 0 Critical Warnings and 0 Errors encountered.
+route_design completed successfully
+route_design: Time (s): cpu = 00:01:31 ; elapsed = 00:01:05 . Memory (MB): peak = 2501.477 ; gain = 104.270
+INFO: [Vivado 12-24828] Executing command : report_drc -file ecg_system_wrapper_drc_routed.rpt -pb ecg_system_wrapper_drc_routed.pb -rpx ecg_system_wrapper_drc_routed.rpx
+Command: report_drc -file ecg_system_wrapper_drc_routed.rpt -pb ecg_system_wrapper_drc_routed.pb -rpx ecg_system_wrapper_drc_routed.rpx
+INFO: [IP_Flow 19-1839] IP Catalog is up to date.
+INFO: [DRC 23-27] Running DRC with 2 threads
+INFO: [Vivado_Tcl 2-168] The results of DRC are in file D:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.runs/impl_1/ecg_system_wrapper_drc_routed.rpt.
+report_drc completed successfully
+INFO: [Vivado 12-24828] Executing command : report_methodology -file ecg_system_wrapper_methodology_drc_routed.rpt -pb ecg_system_wrapper_methodology_drc_routed.pb -rpx ecg_system_wrapper_methodology_drc_routed.rpx
+Command: report_methodology -file ecg_system_wrapper_methodology_drc_routed.rpt -pb ecg_system_wrapper_methodology_drc_routed.pb -rpx ecg_system_wrapper_methodology_drc_routed.rpx
+INFO: [Timing 38-35] Done setting XDC timing constraints.
+INFO: [DRC 23-133] Running Methodology with 2 threads
+INFO: [Vivado_Tcl 2-1520] The results of Report Methodology are in file D:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.runs/impl_1/ecg_system_wrapper_methodology_drc_routed.rpt.
+report_methodology completed successfully
+report_methodology: Time (s): cpu = 00:00:16 ; elapsed = 00:00:09 . Memory (MB): peak = 2501.477 ; gain = 0.000
+INFO: [Vivado 12-24828] Executing command : report_timing_summary -max_paths 10 -routable_nets -report_unconstrained -file ecg_system_wrapper_timing_summary_routed.rpt -pb ecg_system_wrapper_timing_summary_routed.pb -rpx ecg_system_wrapper_timing_summary_routed.rpx -warn_on_violation 
+INFO: [Timing 38-35] Done setting XDC timing constraints.
+INFO: [Timing 38-91] UpdateTimingParams: Speed grade: -1, Delay Type: min_max.
+INFO: [Timing 38-191] Multithreading enabled for timing update using a maximum of 2 CPUs
+CRITICAL WARNING: [Timing 38-282] The design failed to meet the timing requirements. Please see the timing summary report for details on the timing violations.
+report_timing_summary: Time (s): cpu = 00:00:13 ; elapsed = 00:00:09 . Memory (MB): peak = 2501.477 ; gain = 0.000
+INFO: [Vivado 12-24838] Running report commands "report_incremental_reuse, report_route_status" in parallel.
+Running report generation with 2 threads.
+INFO: [Vivado 12-24828] Executing command : report_incremental_reuse -file ecg_system_wrapper_incremental_reuse_routed.rpt
+INFO: [Vivado_Tcl 4-1062] Incremental flow is disabled. No incremental reuse Info to report.
+INFO: [Vivado 12-24828] Executing command : report_route_status -file ecg_system_wrapper_route_status.rpt -pb ecg_system_wrapper_route_status.pb
+INFO: [Vivado 12-24828] Executing command : report_power -file ecg_system_wrapper_power_routed.rpt -pb ecg_system_wrapper_power_summary_routed.pb -rpx ecg_system_wrapper_power_routed.rpx
+Command: report_power -file ecg_system_wrapper_power_routed.rpt -pb ecg_system_wrapper_power_summary_routed.pb -rpx ecg_system_wrapper_power_routed.rpx
+Running Vector-less Activity Propagation...
+
+Finished Running Vector-less Activity Propagation
+166 Infos, 3 Warnings, 1 Critical Warnings and 0 Errors encountered.
+report_power completed successfully
+report_power: Time (s): cpu = 00:00:09 ; elapsed = 00:00:07 . Memory (MB): peak = 2517.172 ; gain = 15.695
+INFO: [Vivado 12-24828] Executing command : report_clock_utilization -file ecg_system_wrapper_clock_utilization_routed.rpt
+INFO: [Vivado 12-24828] Executing command : report_bus_skew -warn_on_violation -file ecg_system_wrapper_bus_skew_routed.rpt -pb ecg_system_wrapper_bus_skew_routed.pb -rpx ecg_system_wrapper_bus_skew_routed.rpx
+INFO: [Timing 38-91] UpdateTimingParams: Speed grade: -1, Delay Type: min_max.
+INFO: [Timing 38-191] Multithreading enabled for timing update using a maximum of 2 CPUs
+generate_parallel_reports: Time (s): cpu = 00:00:46 ; elapsed = 00:00:30 . Memory (MB): peak = 2517.172 ; gain = 15.695
+INFO: [Timing 38-480] Writing timing data to binary archive.
+Wrote PlaceDB: Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 2520.969 ; gain = 0.000
+Wrote PulsedLatchDB: Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 2520.969 ; gain = 0.000
+Writing XDEF routing.
+Writing XDEF routing logical nets.
+Write ShapeDB Complete: Time (s): cpu = 00:00:01 ; elapsed = 00:00:00.114 . Memory (MB): peak = 2549.051 ; gain = 28.145
+Writing XDEF routing special nets.
+Wrote RouteStorage: Time (s): cpu = 00:00:02 ; elapsed = 00:00:00.403 . Memory (MB): peak = 2557.895 ; gain = 36.926
+Wrote PlaceStorage: Time (s): cpu = 00:00:03 ; elapsed = 00:00:01 . Memory (MB): peak = 2558.703 ; gain = 0.809
+Wrote Netlist Cache: Time (s): cpu = 00:00:01 ; elapsed = 00:00:00.078 . Memory (MB): peak = 2558.703 ; gain = 0.000
+Wrote Device Cache: Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.015 . Memory (MB): peak = 2558.703 ; gain = 0.000
+Write Physdb Complete: Time (s): cpu = 00:00:06 ; elapsed = 00:00:02 . Memory (MB): peak = 2558.703 ; gain = 37.734
+INFO: [Common 17-1381] The checkpoint 'D:/ecg_fpga/build/full_clean_20261104_run1/build/vivado/ecg_scope/ecg_overlay.runs/impl_1/ecg_system_wrapper_routed.dcp' has been generated.
+INFO: [Memdata 28-167] Found XPM memory block ecg_system_i/write_connect/inst/s00_nodes/s00_w_node/inst/inst_mi_handler/gen_normal_area.inst_fifo_node_payld/gen_xpm_memory_fifo.inst_fifo/gen_mem_rep[0].inst_xpm_memory/xpm_memory_base_inst with a P_MEMORY_PRIMITIVE property set to distributed. A value of block is required. You will not be able to use the updatemem program to update the bitstream with new data for the ecg_system_i/write_connect/inst/s00_nodes/s00_w_node/inst/inst_mi_handler/gen_normal_area.inst_fifo_node_payld/gen_xpm_memory_fifo.inst_fifo/gen_mem_rep[0].inst_xpm_memory/xpm_memory_base_inst block.
+INFO: [Memdata 28-167] Found XPM memory block ecg_system_i/write_connect/inst/s00_nodes/s00_aw_node/inst/inst_mi_handler/gen_normal_area.inst_fifo_node_payld/gen_xpm_memory_fifo.inst_fifo/gen_mem_rep[0].inst_xpm_memory/xpm_memory_base_inst with a P_MEMORY_PRIMITIVE property set to distributed. A value of block is required. You will not be able to use the updatemem program to update the bitstream with new data for the ecg_system_i/write_connect/inst/s00_nodes/s00_aw_node/inst/inst_mi_handler/gen_normal_area.inst_fifo_node_payld/gen_xpm_memory_fifo.inst_fifo/gen_mem_rep[0].inst_xpm_memory/xpm_memory_base_inst block.
+INFO: [Memdata 28-167] Found XPM memory block ecg_system_i/read_connect/inst/s00_nodes/s00_r_node/inst/inst_mi_handler/gen_normal_area.inst_fifo_node_payld/gen_xpm_memory_fifo.inst_fifo/gen_mem_rep[0].inst_xpm_memory/xpm_memory_base_inst with a P_MEMORY_PRIMITIVE property set to distributed. A value of block is required. You will not be able to use the updatemem program to update the bitstream with new data for the ecg_system_i/read_connect/inst/s00_nodes/s00_r_node/inst/inst_mi_handler/gen_normal_area.inst_fifo_node_payld/gen_xpm_memory_fifo.inst_fifo/gen_mem_rep[0].inst_xpm_memory/xpm_memory_base_inst block.
+INFO: [Memdata 28-167] Found XPM memory block ecg_system_i/read_connect/inst/s00_nodes/s00_ar_node/inst/inst_mi_handler/gen_normal_area.inst_fifo_node_payld/gen_xpm_memory_fifo.inst_fifo/gen_mem_rep[0].inst_xpm_memory/xpm_memory_base_inst with a P_MEMORY_PRIMITIVE property set to distributed. A value of block is required. You will not be able to use the updatemem program to update the bitstream with new data for the ecg_system_i/read_connect/inst/s00_nodes/s00_ar_node/inst/inst_mi_handler/gen_normal_area.inst_fifo_node_payld/gen_xpm_memory_fifo.inst_fifo/gen_mem_rep[0].inst_xpm_memory/xpm_memory_base_inst block.
+INFO: [Memdata 28-167] Found XPM memory block ecg_system_i/conv_write/inst/s00_nodes/s00_w_node/inst/inst_mi_handler/gen_normal_area.inst_fifo_node_payld/gen_xpm_memory_fifo.inst_fifo/gen_mem_rep[0].inst_xpm_memory/xpm_memory_base_inst with a P_MEMORY_PRIMITIVE property set to distributed. A value of block is required. You will not be able to use the updatemem program to update the bitstream with new data for the ecg_system_i/conv_write/inst/s00_nodes/s00_w_node/inst/inst_mi_handler/gen_normal_area.inst_fifo_node_payld/gen_xpm_memory_fifo.inst_fifo/gen_mem_rep[0].inst_xpm_memory/xpm_memory_base_inst block.
+INFO: [Memdata 28-167] Found XPM memory block ecg_system_i/conv_write/inst/s00_nodes/s00_aw_node/inst/inst_mi_handler/gen_normal_area.inst_fifo_node_payld/gen_xpm_memory_fifo.inst_fifo/gen_mem_rep[0].inst_xpm_memory/xpm_memory_base_inst with a P_MEMORY_PRIMITIVE property set to distributed. A value of block is required. You will not be able to use the updatemem program to update the bitstream with new data for the ecg_system_i/conv_write/inst/s00_nodes/s00_aw_node/inst/inst_mi_handler/gen_normal_area.inst_fifo_node_payld/gen_xpm_memory_fifo.inst_fifo/gen_mem_rep[0].inst_xpm_memory/xpm_memory_base_inst block.
+INFO: [Memdata 28-167] Found XPM memory block ecg_system_i/conv_read/inst/s00_nodes/s00_r_node/inst/inst_mi_handler/gen_normal_area.inst_fifo_node_payld/gen_xpm_memory_fifo.inst_fifo/gen_mem_rep[0].inst_xpm_memory/xpm_memory_base_inst with a P_MEMORY_PRIMITIVE property set to distributed. A value of block is required. You will not be able to use the updatemem program to update the bitstream with new data for the ecg_system_i/conv_read/inst/s00_nodes/s00_r_node/inst/inst_mi_handler/gen_normal_area.inst_fifo_node_payld/gen_xpm_memory_fifo.inst_fifo/gen_mem_rep[0].inst_xpm_memory/xpm_memory_base_inst block.
+INFO: [Memdata 28-167] Found XPM memory block ecg_system_i/conv_read/inst/s00_nodes/s00_ar_node/inst/inst_mi_handler/gen_normal_area.inst_fifo_node_payld/gen_xpm_memory_fifo.inst_fifo/gen_mem_rep[0].inst_xpm_memory/xpm_memory_base_inst with a P_MEMORY_PRIMITIVE property set to distributed. A value of block is required. You will not be able to use the updatemem program to update the bitstream with new data for the ecg_system_i/conv_read/inst/s00_nodes/s00_ar_node/inst/inst_mi_handler/gen_normal_area.inst_fifo_node_payld/gen_xpm_memory_fifo.inst_fifo/gen_mem_rep[0].inst_xpm_memory/xpm_memory_base_inst block.
+Command: write_bitstream -force ecg_system_wrapper.bit
+Attempting to get a license for feature 'Vivado_Implementation' and/or device 'xc7z020'
+INFO: [Common 17-349] Got license for feature 'Vivado_Implementation' and/or device 'xc7z020'
+Running DRC as a precondition to command write_bitstream
+INFO: [IP_Flow 19-1839] IP Catalog is up to date.
+INFO: [DRC 23-27] Running DRC with 2 threads
+INFO: [Vivado 12-3199] DRC finished with 0 Errors
+INFO: [Vivado 12-3200] Please refer to the DRC report (report_drc) for more information.
+Integrating Hard IP ELF/MEM with the PDI.
+INFO: [Designutils 20-2272] Running write_bitstream with 2 threads.
+Initializing bitstream generation complete. Time (s): cpu = 00:00:01 ; elapsed = 00:00:00.930 . Memory (MB): peak = 2650.605 ; gain = 71.574
+Loading data files...
+Loading site data...
+Loading route data...
+Processing options...
+Creating bitmap...
+Creating bitstream...
+Writing bitstream ./ecg_system_wrapper.bit...
+Generate Bitstream complete. Time (s): cpu = 00:00:27 ; elapsed = 00:00:17 . Memory (MB): peak = 2926.500 ; gain = 347.469
+INFO: [Vivado 12-1842] Bitgen Completed Successfully.
+INFO: [Common 17-83] Releasing license: Vivado_Implementation
+188 Infos, 3 Warnings, 1 Critical Warnings and 0 Errors encountered.
+write_bitstream completed successfully
+write_bitstream: Time (s): cpu = 00:00:35 ; elapsed = 00:00:32 . Memory (MB): peak = 2926.500 ; gain = 367.797
+INFO: [Common 17-206] Exiting Vivado at Wed Nov  4 17:12:12 2026...
+[Wed Nov  4 17:12:13 2026] impl_1 finished
+wait_on_runs: Time (s): cpu = 00:00:02 ; elapsed = 00:11:33 . Memory (MB): peak = 1187.977 ; gain = 0.000
+# open_run impl_1
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.236 . Memory (MB): peak = 1292.598 ; gain = 0.000
+INFO: [Netlist 29-17] Analyzing 2653 Unisim elements for replacement
+INFO: [Netlist 29-28] Unisim Transformation completed in 0 CPU seconds
+INFO: [Project 1-479] Netlist was created with Vivado 2026.1
+INFO: [Project 1-570] Preparing netlist for logic optimization
+Read ShapeDB Complete: Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.061 . Memory (MB): peak = 1422.418 ; gain = 9.512
+INFO: [Timing 38-478] Restoring timing data from binary archive.
+INFO: [Timing 38-479] Binary timing data restore complete.
+INFO: [Project 1-856] Restoring constraints from binary archive.
+INFO: [Project 1-853] Binary constraint restore complete.
+INFO: [Designutils 20-5722] Start Reading Physical Databases.
+Reading placement.
+Read Netlist Cache: Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.030 . Memory (MB): peak = 2103.148 ; gain = 0.000
+Reading placer database...
+Read Device Cache: Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.008 . Memory (MB): peak = 2103.148 ; gain = 0.000
+Read PlaceDB: Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 2103.148 ; gain = 0.000
+Read placeStorage: Time (s): cpu = 00:00:01 ; elapsed = 00:00:00.557 . Memory (MB): peak = 2135.832 ; gain = 32.684
+Read PulsedLatchDB: Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 2135.832 ; gain = 0.000
+Reading routing.
+Read RouteStorage: Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.266 . Memory (MB): peak = 2135.832 ; gain = 0.000
+Read Physdb Files: Time (s): cpu = 00:00:01 ; elapsed = 00:00:00.911 . Memory (MB): peak = 2135.832 ; gain = 32.684
+Restored from archive | CPU: 1.000000 secs | Memory: 0.000000 MB |
+Finished XDEF File Restore: Time (s): cpu = 00:00:01 ; elapsed = 00:00:00.948 . Memory (MB): peak = 2135.832 ; gain = 33.766
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.015 . Memory (MB): peak = 2147.945 ; gain = 0.000
+INFO: [Project 1-111] Unisim Transformation Summary:
+  A total of 101 instances were transformed.
+  RAM16X1D => RAM32X1D (RAMD32(x2)): 2 instances
+  RAM32M => RAM32M (RAMD32(x6), RAMS32(x2)): 99 instances
+
+open_run: Time (s): cpu = 00:00:09 ; elapsed = 00:00:11 . Memory (MB): peak = 2147.945 ; gain = 959.969
+# for {set attempt 0} {$attempt<4 && [get_property SLACK [get_timing_paths -delay_type max -max_paths 1]]<0} {incr attempt} {
+#  if {$attempt==0} {phys_opt_design -directive AggressiveExplore} else {phys_opt_design -directive Explore}
+#  route_design -directive Explore
+# }
+get_timing_paths: Time (s): cpu = 00:00:10 ; elapsed = 00:00:06 . Memory (MB): peak = 2270.973 ; gain = 123.027
+Command: phys_opt_design -directive AggressiveExplore
+Attempting to get a license for feature 'Vivado_Implementation' and/or device 'xc7z020'
+INFO: [Common 17-349] Got license for feature 'Vivado_Implementation' and/or device 'xc7z020'
+INFO: [Vivado_Tcl 4-241] Physical synthesis in post route mode 
+INFO: [Vivado_Tcl 4-137] Directive used for phys_opt_design is: AggressiveExplore
+INFO: [Vivado_Tcl 4-1435] PhysOpt_Tcl_Interface Runtime Before Starting Physical Synthesis Task | CPU: 4.00s |  WALL: 2.42s
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.015 . Memory (MB): peak = 2355.012 ; gain = 0.000
+
+Starting Physical Synthesis Task
+
+Phase 1 Physical Synthesis Initialization
+INFO: [Physopt 32-721] Multithreading enabled for phys_opt_design using a maximum of 2 CPUs
+INFO: [Physopt 32-668] Current Timing Summary | WNS=-0.144 | TNS=-0.267 | WHS=0.050 | THS=0.000 |
+Phase 1 Physical Synthesis Initialization | Checksum: 23a973310
+
+Time (s): cpu = 00:00:11 ; elapsed = 00:00:06 . Memory (MB): peak = 2356.059 ; gain = 1.047
+
+Phase 2 Critical Path Optimization
+INFO: [Physopt 32-668] Current Timing Summary | WNS=-0.144 | TNS=-0.267 | WHS=0.050 | THS=0.000 |
+INFO: [Physopt 32-953] Path group WNS did not improve. Path group: clk_fpga_0. Processed net: ecg_system_i/ecg_filter_0/inst/grp_ecg_filter_sample_fu_546/reg_408_reg_n_3_[41].
+INFO: [Physopt 32-953] Path group WNS did not improve. Path group: clk_fpga_0. Processed net: ecg_system_i/ps7/inst/FCLK_CLK_unbuffered[0].
+INFO: [Physopt 32-953] Path group WNS did not improve. Path group: clk_fpga_0. Processed net: ecg_system_i/ecg_filter_0/inst/grp_ecg_filter_sample_fu_546/reg_408[3]_i_8_n_3.
+INFO: [Physopt 32-953] Path group WNS did not improve. Path group: clk_fpga_0. Processed net: ecg_system_i/ecg_filter_0/inst/grp_ecg_filter_sample_fu_546/reg_408_reg[42]_i_2_n_9.
+INFO: [Physopt 32-608] Optimized 1 net.  Swapped 22 pins.
+INFO: [Physopt 32-952] Improved path group WNS = -0.126. Path group: clk_fpga_0. Processed net: ecg_system_i/ecg_filter_0/inst/grp_ecg_filter_sample_fu_546/p_1_out_i_41_n_3.
+INFO: [Physopt 32-953] Path group WNS did not improve. Path group: clk_fpga_0. Processed net: ecg_system_i/ecg_filter_0/inst/grp_ecg_filter_sample_fu_546/p_1_out_i_28_n_3.
+INFO: [Physopt 32-710] Processed net ecg_system_i/ecg_filter_0/inst/grp_ecg_filter_sample_fu_546/p_1_out_i_28_n_3. Critical path length was reduced through logic transformation on cell ecg_system_i/ecg_filter_0/inst/grp_ecg_filter_sample_fu_546/p_1_out_i_28_comp.
+INFO: [Physopt 32-952] Improved path group WNS = -0.120. Path group: clk_fpga_0. Processed net: ecg_system_i/ecg_filter_0/inst/grp_ecg_filter_sample_fu_546/p_1_out_i_64_n_3.
+INFO: [Physopt 32-608] Optimized 1 net.  Swapped 22 pins.
+INFO: [Physopt 32-952] Improved path group WNS = -0.112. Path group: clk_fpga_0. Processed net: ecg_system_i/ecg_filter_0/inst/grp_ecg_filter_sample_fu_546/p_1_out_i_35_n_3.
+INFO: [Physopt 32-953] Path group WNS did not improve. Path group: clk_fpga_0. Processed net: ecg_system_i/ecg_filter_0/inst/grp_ecg_filter_sample_fu_546/A[5].
+INFO: [Physopt 32-953] Path group WNS did not improve. Path group: clk_fpga_0. Processed net: ecg_system_i/ecg_filter_0/inst/grp_ecg_filter_sample_fu_546/p_1_out_i_45_n_3.
+INFO: [Physopt 32-953] Path group WNS did not improve. Path group: clk_fpga_0. Processed net: ecg_system_i/ecg_filter_0/inst/grp_ecg_filter_sample_fu_546/ap_CS_fsm[1]_i_2_n_3.
+INFO: [Physopt 32-953] Path group WNS did not improve. Path group: clk_fpga_0. Processed net: ecg_system_i/ecg_filter_0/inst/grp_ecg_filter_sample_fu_546/p_1_out_n_108.
+INFO: [Physopt 32-703] Processed net ecg_system_i/ecg_filter_0/inst/grp_ecg_filter_sample_fu_546/ap_CS_fsm_state18. Clock skew was adjusted for instance ecg_system_i/ecg_filter_0/inst/grp_ecg_filter_sample_fu_546/ap_CS_fsm_reg[17].
+INFO: [Physopt 32-952] Improved path group WNS = -0.082. Path group: clk_fpga_0. Processed net: ecg_system_i/ecg_filter_0/inst/grp_ecg_filter_sample_fu_546/ap_CS_fsm_state18.
+INFO: [Physopt 32-608] Optimized 1 net.  Swapped 20 pins.
+INFO: [Physopt 32-952] Improved path group WNS = -0.060. Path group: clk_fpga_0. Processed net: ecg_system_i/ecg_filter_0/inst/grp_ecg_filter_sample_fu_546/p_1_out_i_33_n_3.
+INFO: [Physopt 32-703] Processed net ecg_system_i/ecg_filter_0/inst/grp_ecg_filter_sample_fu_546/st_notch_y2_0_0_fu_198_reg[23]_0[23]. Clock skew was adjusted for instance ecg_system_i/ecg_filter_0/inst/grp_ecg_filter_sample_fu_546/st_notch_y2_0_0_fu_198_reg[23].
+INFO: [Physopt 32-952] Improved path group WNS = -0.045. Path group: clk_fpga_0. Processed net: ecg_system_i/ecg_filter_0/inst/grp_ecg_filter_sample_fu_546/st_notch_y2_0_0_fu_198_reg[23]_0[23].
+INFO: [Physopt 32-953] Path group WNS did not improve. Path group: clk_fpga_0. Processed net: ecg_system_i/ecg_filter_0/inst/grp_ecg_filter_sample_fu_546/p_1_out_i_41_n_3.
+INFO: [Physopt 32-953] Path group WNS did not improve. Path group: clk_fpga_0. Processed net: ecg_system_i/ecg_filter_0/inst/grp_ecg_filter_sample_fu_546/p_1_out_i_89_n_3.
+INFO: [Physopt 32-703] Processed net ecg_system_i/ecg_filter_0/inst/grp_ecg_filter_sample_fu_546/tmp_reg_1702[1]. Clock skew was adjusted for instance ecg_system_i/ecg_filter_0/inst/grp_ecg_filter_sample_fu_546/tmp_reg_1702_reg[1].
+INFO: [Physopt 32-952] Improved path group WNS = -0.038. Path group: clk_fpga_0. Processed net: ecg_system_i/ecg_filter_0/inst/grp_ecg_filter_sample_fu_546/tmp_reg_1702[1].
+INFO: [Physopt 32-608] Optimized 1 net.  Swapped 21 pins.
+INFO: [Physopt 32-952] Improved path group WNS = -0.005. Path group: clk_fpga_0. Processed net: ecg_system_i/ecg_filter_0/inst/grp_ecg_filter_sample_fu_546/p_1_out_i_64_n_3.
+INFO: [Physopt 32-608] Optimized 1 net.  Swapped 21 pins.
+INFO: [Physopt 32-952] Improved path group WNS = -0.003. Path group: clk_fpga_0. Processed net: ecg_system_i/ecg_filter_0/inst/grp_ecg_filter_sample_fu_546/p_1_out_i_36_n_3.
+INFO: [Physopt 32-703] Processed net ecg_system_i/ecg_filter_0/inst/grp_ecg_filter_sample_fu_546/ap_CS_fsm_state18. Clock skew was adjusted for instance ecg_system_i/ecg_filter_0/inst/grp_ecg_filter_sample_fu_546/ap_CS_fsm_reg[17].
+INFO: [Physopt 32-735] Processed net ecg_system_i/ecg_filter_0/inst/grp_ecg_filter_sample_fu_546/ap_CS_fsm_state18. Optimization improves timing on the net.
+INFO: [Physopt 32-668] Current Timing Summary | WNS=0.016 | TNS=0.000 | WHS=0.002 | THS=0.000 |
+INFO: [Physopt 32-668] Current Timing Summary | WNS=0.016 | TNS=0.000 | WHS=0.002 | THS=0.000 |
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.018 . Memory (MB): peak = 2571.312 ; gain = 0.000
+Phase 2 Critical Path Optimization | Checksum: 23a973310
+
+Time (s): cpu = 00:01:37 ; elapsed = 00:01:09 . Memory (MB): peak = 2571.312 ; gain = 216.301
+
+Phase 3 Hold Fix Optimization
+INFO: [Physopt 32-668] Current Timing Summary | WNS=0.016 | TNS=0.000 | WHS=0.002 | THS=0.000 |
+INFO: [Physopt 32-1493] The number of hold_fix net fail limit is 5.
+INFO: [Physopt 32-66] No high hold slack nets found for hold slack optimization.
+INFO: [Physopt 32-668] Current Timing Summary | WNS=0.016 | TNS=0.000 | WHS=0.002 | THS=0.000 |
+Phase 3 Hold Fix Optimization | Checksum: 23a973310
+
+Time (s): cpu = 00:01:37 ; elapsed = 00:01:09 . Memory (MB): peak = 2571.312 ; gain = 216.301
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.017 . Memory (MB): peak = 2571.312 ; gain = 0.000
+INFO: [Physopt 32-669] Post Physical Optimization Timing Summary | WNS=0.016 | TNS=0.000 | WHS=0.002 | THS=0.000 |
+
+Summary of Physical Synthesis Optimizations
+============================================
+
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+|  Optimization   |  WNS Gain (ns)  |  TNS Gain (ns)  |  Added Cells  |  Removed Cells  |  Optimized Cells/Nets  |  Dont Touch  |  Iterations  |  Elapsed   |
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+|  Critical Path  |          0.160  |          0.267  |            0  |              0  |                    10  |           0  |           1  |  00:01:03  |
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+Summary of Hold Fix Optimizations
+=================================
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------
+|  Optimization               |  WHS Gain (ns)  |  THS Gain (ns)  |  Added LUTs  |  Added FFs  |  Optimized Nets  |  Dont Touch  |  Iterations  |  Elapsed   |
+--------------------------------------------------------------------------------------------------------------------------------------------------------------
+|  LUT1 and ZHOLD Insertion   |          0.000  |          0.000  |           0  |          0  |               0  |           0  |           0  |  00:00:00  |
+|  Total                      |          0.000  |          0.000  |           0  |          0  |               0  |           0  |           0  |  00:00:00  |
+--------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.016 . Memory (MB): peak = 2571.312 ; gain = 0.000
+Ending Physical Synthesis Task | Checksum: 122837d49
+
+Time (s): cpu = 00:01:38 ; elapsed = 00:01:09 . Memory (MB): peak = 2571.312 ; gain = 216.301
+INFO: [Common 17-83] Releasing license: Vivado_Implementation
+46 Infos, 0 Warnings, 0 Critical Warnings and 0 Errors encountered.
+phys_opt_design completed successfully
+phys_opt_design: Time (s): cpu = 00:01:42 ; elapsed = 00:01:12 . Memory (MB): peak = 2571.312 ; gain = 300.340
+Command: route_design -directive Explore
+Attempting to get a license for feature 'Vivado_Implementation' and/or device 'xc7z020'
+INFO: [Common 17-349] Got license for feature 'Vivado_Implementation' and/or device 'xc7z020'
+INFO: [DRC 23-27] Running DRC with 2 threads
+INFO: [Vivado_Tcl 4-198] DRC finished with 0 Errors
+INFO: [Vivado_Tcl 4-199] Please refer to the DRC report (report_drc) for more information.
+
+
+Starting Routing Task
+INFO: [Route 35-270] Using Router directive 'Explore'.
+INFO: [Route 35-254] Multithreading enabled for route_design using a maximum of 2 CPUs
+
+Phase 1 Build RT Design
+Checksum: PlaceDB: 9446ae9 ConstDB: 0 ShapeSum: 8ecbf066 RouteDB: 13e715d7
+Post Restoration Checksum: NetGraph: f615e0c7 | NumContArr: 965ac0e5 | Constraints: c2a8fa9d | Timing: c2a8fa9d
+Phase 1 Build RT Design | Checksum: 311c296e6
+
+Time (s): cpu = 00:00:30 ; elapsed = 00:00:22 . Memory (MB): peak = 2571.312 ; gain = 0.000
+
+Phase 2 Router Initialization
+
+Phase 2.1 Fix Topology Constraints
+Phase 2.1 Fix Topology Constraints | Checksum: 311c296e6
+
+Time (s): cpu = 00:00:30 ; elapsed = 00:00:22 . Memory (MB): peak = 2571.312 ; gain = 0.000
+
+Phase 2.2 Pre Route Cleanup
+Phase 2.2 Pre Route Cleanup | Checksum: 311c296e6
+
+Time (s): cpu = 00:00:30 ; elapsed = 00:00:22 . Memory (MB): peak = 2571.312 ; gain = 0.000
+
+Phase 2.3 Timing Verification
+
+Phase 2.3.1 Update Timing
+Phase 2.3.1 Update Timing | Checksum: 261ac6e81
+
+Time (s): cpu = 00:00:49 ; elapsed = 00:00:33 . Memory (MB): peak = 2571.312 ; gain = 0.000
+INFO: [Route 35-416] Intermediate Timing Summary | WNS=0.016  | TNS=0.000  | WHS=0.002  | THS=0.000  |
+
+Phase 2.3 Timing Verification | Checksum: 261ac6e81
+
+Time (s): cpu = 00:00:49 ; elapsed = 00:00:33 . Memory (MB): peak = 2571.312 ; gain = 0.000
+INFO: [Route 35-61] The design met the setup and hold requirement.
+
+Phase 2.4 Route finalize
+
+Router Utilization Summary
+  Global Vertical Routing Utilization    = 8.04261 %
+  Global Horizontal Routing Utilization  = 11.1995 %
+  Routable Net Status*
+  *Does not include unroutable nets such as driverless and loadless.
+  Run report_route_status for detailed report.
+  Number of Failed Nets               = 0
+    (Failed Nets is the sum of unrouted and partially routed nets)
+  Number of Unrouted Nets             = 0
+  Number of Partially Routed Nets     = 0
+  Number of Node Overlaps             = 0
+
+Phase 2.4 Route finalize | Checksum: 261ac6e81
+
+Time (s): cpu = 00:00:49 ; elapsed = 00:00:33 . Memory (MB): peak = 2571.312 ; gain = 0.000
+
+Phase 2.5 Verifying routed nets
+
+ Verification completed successfully
+Phase 2.5 Verifying routed nets | Checksum: 261ac6e81
+
+Time (s): cpu = 00:00:49 ; elapsed = 00:00:33 . Memory (MB): peak = 2571.312 ; gain = 0.000
+
+Phase 2.6 Depositing Routes
+Phase 2.6 Depositing Routes | Checksum: 261ac6e81
+
+Time (s): cpu = 00:00:52 ; elapsed = 00:00:36 . Memory (MB): peak = 2571.312 ; gain = 0.000
+Phase 2 Router Initialization | Checksum: 261ac6e81
+
+Time (s): cpu = 00:00:52 ; elapsed = 00:00:36 . Memory (MB): peak = 2571.312 ; gain = 0.000
+
+Phase 3 Timing Verification
+
+Phase 3.1 Update Timing
+Phase 3.1 Update Timing | Checksum: 2b3580840
+
+Time (s): cpu = 00:01:00 ; elapsed = 00:00:40 . Memory (MB): peak = 2571.312 ; gain = 0.000
+INFO: [Route 35-416] Intermediate Timing Summary | WNS=0.014  | TNS=0.000  | WHS=0.002  | THS=0.000  |
+
+Phase 3 Timing Verification | Checksum: 2b3580840
+
+Time (s): cpu = 00:01:00 ; elapsed = 00:00:41 . Memory (MB): peak = 2571.312 ; gain = 0.000
+
+Phase 4 Route finalize
+
+Router Utilization Summary
+  Global Vertical Routing Utilization    = 8.04261 %
+  Global Horizontal Routing Utilization  = 11.1995 %
+  Routable Net Status*
+  *Does not include unroutable nets such as driverless and loadless.
+  Run report_route_status for detailed report.
+  Number of Failed Nets               = 0
+    (Failed Nets is the sum of unrouted and partially routed nets)
+  Number of Unrouted Nets             = 0
+  Number of Partially Routed Nets     = 0
+  Number of Node Overlaps             = 0
+
+Phase 4 Route finalize | Checksum: 2b3580840
+
+Time (s): cpu = 00:01:00 ; elapsed = 00:00:41 . Memory (MB): peak = 2571.312 ; gain = 0.000
+
+Phase 5 Verifying routed nets
+
+ Verification completed successfully
+Phase 5 Verifying routed nets | Checksum: 2b3580840
+
+Time (s): cpu = 00:01:00 ; elapsed = 00:00:41 . Memory (MB): peak = 2571.312 ; gain = 0.000
+
+Phase 6 Depositing Routes
+Phase 6 Depositing Routes | Checksum: 2b3580840
+
+Time (s): cpu = 00:01:03 ; elapsed = 00:00:43 . Memory (MB): peak = 2571.312 ; gain = 0.000
+
+Phase 7 Post Process Routing
+Phase 7 Post Process Routing | Checksum: 2b3580840
+
+Time (s): cpu = 00:01:04 ; elapsed = 00:00:44 . Memory (MB): peak = 2571.312 ; gain = 0.000
+
+Phase 8 Post Router Timing
+INFO: [Route 35-20] Post Routing Timing Summary | WNS=0.016  | TNS=0.000  | WHS=0.002  | THS=0.000  |
+
+Phase 8 Post Router Timing | Checksum: 258ef58dc
+
+Time (s): cpu = 00:01:20 ; elapsed = 00:00:52 . Memory (MB): peak = 2571.312 ; gain = 0.000
+INFO: [Route 35-61] The design met the setup and hold requirement.
+Total Elapsed time in route_design: 52.569 secs
+
+Phase 9 Post-Route Event Processing
+Phase 9 Post-Route Event Processing | Checksum: 1633f170d
+
+Time (s): cpu = 00:01:20 ; elapsed = 00:00:53 . Memory (MB): peak = 2571.312 ; gain = 0.000
+INFO: [Route 35-16] Router Completed Successfully
+Ending Routing Task | Checksum: 1633f170d
+
+Time (s): cpu = 00:01:20 ; elapsed = 00:00:53 . Memory (MB): peak = 2571.312 ; gain = 0.000
+
+Routing Is Done.
+INFO: [Common 17-83] Releasing license: Vivado_Implementation
+59 Infos, 0 Warnings, 0 Critical Warnings and 0 Errors encountered.
+route_design completed successfully
+route_design: Time (s): cpu = 00:01:21 ; elapsed = 00:00:53 . Memory (MB): peak = 2571.312 ; gain = 0.000
+get_timing_paths: Time (s): cpu = 00:00:13 ; elapsed = 00:00:08 . Memory (MB): peak = 2571.312 ; gain = 0.000
+# file mkdir [file join $root board runtime overlay]
+# set out [file join $root board runtime overlay]
+# report_timing_summary -file [file join $out timing_summary.rpt]
+# report_utilization -file [file join $out utilization.rpt]
+# report_drc -file [file join $out drc.rpt]
+Command: report_drc -file D:/ecg_fpga/build/full_clean_20261104_run1/board/runtime/overlay/drc.rpt
+INFO: [IP_Flow 19-1839] IP Catalog is up to date.
+INFO: [DRC 23-27] Running DRC with 2 threads
+INFO: [Vivado_Tcl 2-168] The results of DRC are in file D:/ecg_fpga/build/full_clean_20261104_run1/board/runtime/overlay/drc.rpt.
+report_drc completed successfully
+report_drc: Time (s): cpu = 00:00:09 ; elapsed = 00:00:06 . Memory (MB): peak = 2571.312 ; gain = 0.000
+# report_cdc -file [file join $out cdc.rpt]
+INFO: [Timing 38-314] The report_cdc command only analyzes and reports clock domain crossing paths where clocks have been defined on both source and destination sides. Ports with no input delay constraint are skipped. Please run check_timing to verify there are no missing clock definitions in your design, nor any unconstrained input port.
+# if {[get_property SLACK [get_timing_paths -delay_type max -max_paths 1]]<0 || [get_property SLACK [get_timing_paths -delay_type min -max_paths 1]]<0} {error "Inference timing failed"}
+# write_bitstream -force [file join $out ecg_inference.bit]
+Command: write_bitstream -force D:/ecg_fpga/build/full_clean_20261104_run1/board/runtime/overlay/ecg_inference.bit
+Attempting to get a license for feature 'Vivado_Implementation' and/or device 'xc7z020'
+INFO: [Common 17-349] Got license for feature 'Vivado_Implementation' and/or device 'xc7z020'
+Running DRC as a precondition to command write_bitstream
+INFO: [IP_Flow 19-1839] IP Catalog is up to date.
+INFO: [DRC 23-27] Running DRC with 2 threads
+INFO: [Vivado 12-3199] DRC finished with 0 Errors
+INFO: [Vivado 12-3200] Please refer to the DRC report (report_drc) for more information.
+Integrating Hard IP ELF/MEM with the PDI.
+INFO: [Designutils 20-2272] Running write_bitstream with 2 threads.
+Initializing bitstream generation complete. Time (s): cpu = 00:00:01 ; elapsed = 00:00:00.941 . Memory (MB): peak = 2571.312 ; gain = 0.000
+Loading data files...
+Loading site data...
+Loading route data...
+Processing options...
+Creating bitmap...
+Creating bitstream...
+Writing bitstream D:/ecg_fpga/build/full_clean_20261104_run1/board/runtime/overlay/ecg_inference.bit...
+Generate Bitstream complete. Time (s): cpu = 00:00:27 ; elapsed = 00:00:18 . Memory (MB): peak = 2842.113 ; gain = 270.801
+INFO: [Vivado 12-1842] Bitgen Completed Successfully.
+INFO: [Common 17-83] Releasing license: Vivado_Implementation
+8 Infos, 0 Warnings, 0 Critical Warnings and 0 Errors encountered.
+write_bitstream completed successfully
+write_bitstream: Time (s): cpu = 00:00:35 ; elapsed = 00:00:32 . Memory (MB): peak = 2842.113 ; gain = 270.801
+# file copy -force [lindex [glob [file join [get_property DIRECTORY [current_project]] ecg_overlay.gen sources_1 bd ecg_system hw_handoff *.hwh]] 0] [file join $out ecg_inference.hwh]
+# puts "ECG_INFERENCE_BITSTREAM_READY"
+ECG_INFERENCE_BITSTREAM_READY
+# close_project
+# exit
+INFO: [Common 17-206] Exiting Vivado at Wed Nov  4 17:15:27 2026...

@@ -1,0 +1,61 @@
+{
+  "classes": [
+    "A",
+    "F",
+    "L",
+    "N",
+    "R",
+    "V",
+    "|"
+  ],
+  "excluded": [
+    "B",
+    "S"
+  ],
+  "input": "frozen midpoint central beat; warped 108/180; same RR branch for all models",
+  "source_sha256": "371adb8f6b950917b03e5e124980537a45e40df3a15205da295ff271362d416e",
+  "models": [
+    "cnn",
+    "gru",
+    "se_gru"
+  ],
+  "seed": 0,
+  "epochs": 25,
+  "patience": 6,
+  "lr": 0.001,
+  "batch": 256,
+  "weights": [
+    1.330511930837306,
+    1.4137741523268248,
+    0.5842600502843432,
+    0.18449651666075687,
+    0.6699135903144421,
+    0.6030855596472462,
+    2.2139581999290825
+  ],
+  "rr_mean": [
+    -0.2996542155742645,
+    -0.2983187437057495,
+    1.0058956146240234,
+    1.0101217031478882,
+    -0.2935919165611267,
+    1.0260776281356812,
+    -0.29213979840278625,
+    -0.2977008521556854
+  ],
+  "rr_std": [
+    0.2630422115325928,
+    0.2636217772960663,
+    0.15889929234981537,
+    0.17977949976921082,
+    0.22114132344722748,
+    0.249513640999794,
+    0.2324800044298172,
+    0.26337331533432007
+  ],
+  "train_count": 58880,
+  "val_count": 20432,
+  "selection": "validation supported macro F1",
+  "test": "not evaluated; old test already consumed; independent final validation still required",
+  "purpose": "controlled architecture pilot, not exact source reproduction or demonstrated stable improvement"
+}

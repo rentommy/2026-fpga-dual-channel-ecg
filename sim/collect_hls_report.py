@@ -185,6 +185,7 @@ SELFTEST_XML = """<?xml version="1.0" encoding="UTF-8"?>
 
 def selftest():
     """造一份典型的 csynth.xml 验证解析逻辑 —— 不需要装工具链"""
+    print('SELFTEST FIXTURE ONLY: the following example is not measured synthesis or cosimulation evidence.')
     import tempfile
     d = tempfile.mkdtemp()
     p = os.path.join(d, 'x_csynth.xml')

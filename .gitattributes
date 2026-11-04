@@ -1,0 +1,16 @@
+* text=auto eol=lf
+*.bit -text
+*.npz -text
+*.npy -text
+*.pt -text
+*.png -text
+*.jpg -text
+*.zip -text
+*.xlsx -text
+*.epro2 -text
+
+# Preserve historical source snapshot hashes across checkouts
+archive/** -text
+*.docx -text
+*.pptx -text
+*.pdf -text

@@ -1,0 +1,67 @@
+[
+  {
+    "source_local": "技术文档/技术文档_完成版.docx",
+    "public_path": "docs/technical_report_zh.docx",
+    "source_sha256": "80c9674321342b2c63ef763960f8f3ac2e6780beebde405b0f66c52968a74e7a"
+  },
+  {
+    "source_local": "海报/AMD竞赛海报_全英文.pptx",
+    "public_path": "docs/posters/amd_poster_en.pptx",
+    "source_sha256": "e66e125184319b731e9896e40834bc8eebb69826b35baafdb2e7afaa04adfcc5"
+  },
+  {
+    "source_local": "海报/AMD竞赛海报_全中文.pptx",
+    "public_path": "docs/posters/amd_poster_zh.pptx",
+    "source_sha256": "c37a407d22ea55d3ffba1087f6ad7e096724b07fb2e799f079e0f439d4a37183"
+  },
+  {
+    "source_local": "电路/全貌.jpg",
+    "public_path": "docs/images/prototype_overview.jpg",
+    "source_sha256": "24ad7c3c5c2ec86f460e0f17dc5f7e5bc195693ff05b4035ee1636523c0f19bb"
+  },
+  {
+    "source_local": "电路/ads原理图1.png",
+    "public_path": "hardware/acquisition/schematic_01.png",
+    "source_sha256": "16740c99060d4927bd53a3c267bc5bc35fc3783a30bab1c9929921e58e2bf625"
+  },
+  {
+    "source_local": "电路/ads原理图2.png",
+    "public_path": "hardware/acquisition/schematic_02.png",
+    "source_sha256": "ffb09d61c29d1638a329f1a23fe884ab5d3767b2de59138210ca77a95d774090"
+  },
+  {
+    "source_local": "电路/ads电路.png",
+    "public_path": "hardware/acquisition/pcb_layout.png",
+    "source_sha256": "d9699e98d70337efbf41e53f4f2a7306816572e9bbdc7f44660cb020ad03db95"
+  },
+  {
+    "source_local": "电路/spi原理图.png",
+    "public_path": "hardware/isolation/schematic.png",
+    "source_sha256": "d6a916a7f5abbec13565fe4836e5ae1acb40cbf03e632a975c3fe90dcb249ed5"
+  },
+  {
+    "source_local": "电路/spi电路.png",
+    "public_path": "hardware/isolation/pcb_layout.png",
+    "source_sha256": "26cf46c2b604604418d82e8469296bd8fb0fbdd40c8790504b10f07f77884e8b"
+  },
+  {
+    "source_local": "电路/5V原理图.png",
+    "public_path": "hardware/power/schematic.png",
+    "source_sha256": "281ab594ed44b6c730c5731bfcb79e6dc1b032527cff5475fc47a43b076338e6"
+  },
+  {
+    "source_local": "电路/5V电路.png",
+    "public_path": "hardware/power/pcb_layout.png",
+    "source_sha256": "481c88059207b28bade75f73d9073aea17a3bd309aae55ff1a2316dadc4de710"
+  },
+  {
+    "source_local": "隔离板/ISO7763_通道分配.md",
+    "public_path": "hardware/isolation/channel_assignment_zh.md",
+    "source_sha256": "5c70223c29f5b3b7a2786d8cd46d49e6d078a858b4d938876dd60d8170f29392"
+  },
+  {
+    "source_local": "隔离板/接口定义.txt",
+    "public_path": "hardware/isolation/interface_definition.txt",
+    "source_sha256": "c76e40088f351f4cb8540769ef8b576fde5b035e897ed3791f8d1286ecf42534"
+  }
+]

@@ -1,0 +1,20 @@
+{
+  "C": 10,
+  "kernel": "rbf",
+  "gamma": "scale",
+  "features": "72 waveform bins + 72 mask bins + 8 timing features",
+  "data_sha256": "371adb8f6b950917b03e5e124980537a45e40df3a15205da295ff271362d416e",
+  "method": "fixed-parameter weighted SVM baseline; not an exact paper reproduction",
+  "weights": [
+    1.0478382023939528,
+    1.7435920164422136,
+    1.1134109601203717,
+    0.46013116202218207,
+    0.1452993347035178,
+    0.5275871910390252,
+    1.7435920164422136,
+    0.4749571003943099,
+    1.7435920164422136
+  ],
+  "fit_status": 0
+}

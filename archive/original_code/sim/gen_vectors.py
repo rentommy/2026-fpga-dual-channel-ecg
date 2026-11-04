@@ -1,0 +1,354 @@
+# -*- coding: utf-8 -*-
+"""
+阶段 1 收尾：生成 HLS 要用的系数头文件和测试向量
+
+定稿配置（依据见 report/design_phase1.md）：
+  ① 直流阻断  温和高通(k_g=8) + 矩形窗基线估计(L=320) + 延迟补偿(D 每通道可配)
+  ② 50Hz 陷波 二阶 biquad，Q=15，系数 Q2.16（18位）  → 5 个乘法器
+  ③ 低通      31 抽头对称 FIR，40Hz，系数 Q1.19（18位）→ 16 个乘法器（折叠后）
+  合计每通道 22 个乘法器（矩形窗归一化 1 次 + 陷波 5 次 + FIR 折叠 16 次）
+
+系数为什么是 18 位：
+  DSP48E1（7 系列的乘法单元）是 25×18 有符号乘法器，18 位正好是系数端口的
+  原生宽度 —— 用 18 位不比用 16 位多花任何资源，精度却高 4 倍。
+  陷波器的 b1/a1 实际值是 -1.5848（= -2cos(2π·50/500)/(1+α)，iirnotch 的归一化
+  结果；未归一化的 -2cos(2π·50/500) = -1.6180）。超过 1 所以整数位必须留 2 位，
+  得到 Q2.16：范围 ±2.000。
+  FIR 系数最大只有 0.1594，纯小数，整数位不用留，可以给到 19 位小数。
+
+产出：
+  src/hls/ecg_filter_coef.h   系数 + 参数，HLS 直接 include
+  data/input_raw.txt          输入：实测 ADC 码
+  data/golden_float.txt       期望输出：浮点参考链的结果
+  data/testcase_impulse.txt   单位冲激，用来验证 FIR 系数有没有搞反
+  data/testcase_50hz.txt      纯 50Hz 正弦，用来验证陷波器
+"""
+import os
+import sys
+import numpy as np
+
+sys.stdout.reconfigure(encoding='utf-8')                   #设置输出编码
+HERE = os.path.dirname(os.path.abspath(__file__))          #文件路径设置
+ROOT = os.path.normpath(os.path.join(HERE, '..'))
+sys.path.insert(0, os.path.join(ROOT, 'src', 'ps'))
+
+import hw_filter_ref as hw                                 #滤波器参考函数
+
+# 路径相对工程根目录推算，换电脑、换盘符、从任何目录启动都不用改
+RAW = os.path.join(ROOT, 'data', 'source', 'ecg_60s_500sps.txt')
+FS = hw.FS
+
+# ── 定稿参数 ──
+DC_K_G = 8          # 温和高通移位位数，fc = 500/(2π·256) = 0.311 Hz
+DC_BOX_L = 320      # 矩形窗长度，640 ms，取到接近一个心拍（实测 RR 824/878 ms）
+#                     窗比一拍短会把 QRS/T 波算进基线，造成 ST 系统性读低：
+#                     L=256 实测偏差 -0.068 mV，L=320 降到 -0.028 mV
+DC_DELAY_ECG = (DC_BOX_L - 1) // 2   # 159，和矩形窗群延迟对齐，诊断通路
+DC_DELAY_FAST = 0                    # 低延迟通路，不补相位
+DC_DELAY_MAX = 192                   # 延迟线深度上限，按最大的 D 开
+N_CH = 8                             # 通道数
+NOTCH_F0 = 50.0     # 陷波中心频率
+NOTCH_Q = 15.0      # 品质因数Q，极点半径最小(0.979)，对系数量化最不敏感
+FIR_TAPS = 31       # FIR 抽头数
+FIR_FC = 40.0       # 低通截止频率
+
+COEF_BITS = 18      # 系数存储位宽,为 DSP48E1 乘法器系数端口的原生宽度
+# 位宽和小数点位置是两个独立的决定：18 位是 DSP 端口定的，小数点位置由系数大小定。
+# 可表示范围 = ±(2^(COEF_BITS-1)-1) / 2^FRAC = ±131071 / 2^FRAC
+NOTCH_FRAC = 16     # 陷波 Q2.16：范围 ±2.000，系数最大 |b1|=|a1|=1.5848（用掉 79%）
+#                     超过 1 所以必须留整数位，FRAC 最多只能到 16
+#                     注：-2cos(2π·50/500) = -1.6180 是归一化前的理论值，
+#                     iirnotch 会除以 (1+α)，实际存入的是 -1.5848 → -103864
+FIR_FRAC = 19       # FIR  Q1.19：范围 ±0.250，系数最大 0.1594（用掉 64%）
+#                     纯小数不用留整数位，FRAC 比陷波多 3 位 → 精度高 8 倍
+
+# 矩形窗归一化 1/L：硬件里 lp = (sum * DC_BOX_SCALE) >> DC_BOX_FRAC
+# 320 = 2^6 x 5，不是 2 的幂，没法纯移位，要一次常数乘法。
+# FRAC 取 20：滑动和最宽 24+ceil(log2(320))=33 位，乘 12 位常数后 45 位，装得进 48 位累加器。
+DC_BOX_FRAC = 20
+DC_BOX_SCALE = round((1 << DC_BOX_FRAC) / DC_BOX_L)   # 3277，直流增益 1.000061（偏 +0.0061%）
+DC_BOX_ACC_BITS = 34    # 24 + ceil(log2(320)) = 33，留 1 位余量
+
+
+def to_fixed(x, frac, bits=COEF_BITS, tag=''):
+    """浮点 → 定点整数，并检查装不装得下"""
+    v = np.round(np.asarray(x) * (1 << frac)).astype(np.int64)
+    lim = (1 << (bits - 1)) - 1
+    assert np.all(np.abs(v) <= lim), \
+        f'{tag}系数超出 {bits} 位范围（上限 {lim}）: {list(v)}'
+    return v
+
+
+def main():
+    # ── 读实测数据 ──
+    vals = []
+    with open(RAW, encoding='utf-8', errors='ignore') as f:
+        for line in f:
+            try:
+                vals.append(int(line.strip()))
+            except ValueError:
+                pass
+    raw = np.array(vals, dtype=np.int64)
+    print(f'实测数据 {len(raw)} 点 = {len(raw)/FS:.1f} 秒')
+
+
+    # ── 系数 ──
+    b_n, a_n = hw.notch_coef(NOTCH_F0, NOTCH_Q, FS)      #计算陷波器系数
+    h = hw.fir_lowpass(FIR_TAPS, FIR_FC, FS)             #计算冲激响应系数
+
+    # biquad 的 a0 恒为 1，不用存；HLS 里只需要 b0 b1 b2 a1 a2
+    b_q = to_fixed(b_n, NOTCH_FRAC, tag='陷波 b ')       #转换为定点整数
+    a_q = to_fixed(a_n, NOTCH_FRAC, tag='陷波 a ')       #转换为定点整数
+    h_q = to_fixed(h, FIR_FRAC, tag='FIR ')              #转换为定点整数
+    assert a_q[0] == (1 << NOTCH_FRAC), 'a0 应该正好是 1.0'  #验证a0是否为1.0
+
+    print(f'\n陷波器 Q={NOTCH_Q:g}  极点半径 {np.sqrt(abs(a_n[2])):.5f}')
+    print(f'  浮点 b = {b_n}')
+    print(f'  浮点 a = {a_n}')
+    print(f'  Q2.{NOTCH_FRAC}: b = {list(b_q)}   a1 = {a_q[1]}  a2 = {a_q[2]}')
+    print(f'\nFIR {FIR_TAPS} 抽头，Q1.{FIR_FRAC}')
+    print(f'  对称性检查：最大不对称量 {np.abs(h_q - h_q[::-1]).max()}（必须为 0，'
+          f'否则不能折叠）')
+    print(f'  系数和 / 2^{FIR_FRAC} = {h_q.sum()/(1<<FIR_FRAC):.6f}'
+          f'（直流增益，应接近 1.0）')
+
+    # ── 写头文件 ──
+    hls_dir = os.path.join(ROOT, 'src', 'hls')
+    hdr = os.path.join(hls_dir, 'ecg_filter_coef.h')
+    with open(hdr, 'w', encoding='utf-8', newline='\n') as f:
+        acc_bits = 24 + COEF_BITS + int(np.ceil(np.log2(FIR_TAPS)))
+        f.write(f'''// ecg_filter_coef.h  —— 由 sim/gen_vectors.py 自动生成，不要手改
+//
+// 心电预处理滤波链的定点系数，采样率 {FS} Hz
+//
+// 链路：直流阻断(温和高通 k_g={DC_K_G} + 矩形窗 L={DC_BOX_L} + 延迟补偿 D) → 50Hz 陷波(Q={NOTCH_Q:g}) → {FIR_TAPS} 抽头 FIR 低通({FIR_FC:g}Hz)
+//
+// 每通道每采样点的乘法**次数**：1 + 5 + {int(np.ceil(FIR_TAPS/2))} = {1 + 5 + int(np.ceil(FIR_TAPS/2))}
+// 注意这是次数不是乘法器个数：500 SPS 下每个采样周期有 200,000 个 100MHz 时钟，
+// {N_CH} 通道共 {(1 + 5 + int(np.ceil(FIR_TAPS/2)))*N_CH} 次乘法，一个 DSP48 时分复用即可（占用率 {(1+5+int(np.ceil(FIR_TAPS/2)))*N_CH/200000*100:.3f}%）。
+// 双通路（诊断+低延迟）：矩形窗归一化共享，每通道 1+2*21=43 次，
+// {N_CH} 通道共 {43*N_CH} 次，占 {43*N_CH/200000*100:.3f}%。
+// 架构依据见 report/design_phase1.md 第 2.0 节。
+//
+// 系数一律 {COEF_BITS} 位有符号 —— DSP48E1 是 25x18 乘法器，18 位是系数端口的
+// 原生宽度，比 16 位精度高 4 倍而不多占资源。
+
+#ifndef ECG_FILTER_COEF_H
+#define ECG_FILTER_COEF_H
+
+//采样率
+#define ECG_FS          {FS}
+//系数存储位宽
+#define COEF_BITS       {COEF_BITS}
+//==========================================================================================================
+// ── ① 直流阻断：温和高通 + 矩形窗基线估计 + 延迟补偿 ──
+//   acc  += (x - acc) >> DC_SHIFT;                 // 温和高通，0 乘法
+//   yg    = x - acc;
+//   sum  += yg - yg_hist[n - DC_BOX_L];            // 滑动求和，0 乘法
+//   lp    = (sum * DC_BOX_SCALE) >> DC_BOX_FRAC;   // 归一化 1/L，1 次乘法
+//   y     = yg_delay[n - D] - lp;                  // D 每通道独立
+//
+// 为什么要延迟补偿：
+//   一阶 IIR 估基线时，群延迟随频率变 11 倍（0.05~1 Hz 内 22~249 点），
+//   一个固定的 D 只能对齐一个频率，残余相位把 T 波削掉一半。
+//   矩形窗的群延迟恒为 (L-1)/2，所有频率一次对齐。
+//   实测逐拍 ST60 误差 0.152 -> 0.082 mV，T 峰误差 0.270 -> 0.132 mV。
+//
+// 为什么 L 取 {DC_BOX_L}（{DC_BOX_L/FS*1000:.0f} ms）：
+//   L 必须接近一个心拍（实测 RR 824/878 ms = 412/439 点）。窗比一拍短时，
+//   窗里装着 QRS 和 T 波本身，基线被顶高，ST 系统性读低：
+//   L=256(512ms) 实测偏差 -0.068 mV，L={DC_BOX_L} 降到 -0.028 mV。
+//
+// D 每通道独立配置 —— 这是多通道扩展的关键：
+//   DC_DELAY_ECG  = (L-1)/2 = {DC_DELAY_ECG}，低频对齐最准
+//                   总延迟 (D+FIR_DELAY)/FS = {(DC_DELAY_ECG+hw.fir_group_delay(FIR_TAPS))/FS*1000:.0f} ms
+//                   诊断通路：ST 段测量、波形存档、模型推理
+//   DC_DELAY_FAST = {DC_DELAY_FAST}，不补相位，总延迟 {(DC_DELAY_FAST+hw.fir_group_delay(FIR_TAPS))/FS*1000:.0f} ms
+//                   低延迟通路：实时显示、报警，以及肌电一类闭环场景
+//                   （肌电控制文献要求 100~125 ms 以内，348 ms 不适用）
+//
+//   两条通路共享温和高通和矩形窗，只有延迟线/陷波/FIR 各一份。
+//   低延迟通路的延迟**不因为旁边多了诊断通路而增加一个时钟** —— 空间并行，
+//   这是 FPGA 相对 CPU 的本质差别，见 report/why_fpga.md。
+
+//温和高通移位位数，fc = FS/(2*pi*2^DC_SHIFT) = {hw.dc_block_fc(DC_K_G):.3f} Hz
+#define DC_SHIFT        {DC_K_G}
+//矩形窗长度（点）
+#define DC_BOX_L        {DC_BOX_L}
+//矩形窗归一化：lp = (sum * DC_BOX_SCALE) >> DC_BOX_FRAC
+//直流增益 = DC_BOX_SCALE * DC_BOX_L / 2^DC_BOX_FRAC = {DC_BOX_SCALE*DC_BOX_L/(1<<DC_BOX_FRAC):.6f}
+#define DC_BOX_FRAC     {DC_BOX_FRAC}
+#define DC_BOX_SCALE    {DC_BOX_SCALE}
+//滑动和位宽：DATA_BITS + ceil(log2(DC_BOX_L)) = {24+int(np.ceil(np.log2(DC_BOX_L)))} 位，留 1 位余量
+#define DC_BOX_ACC_BITS {DC_BOX_ACC_BITS}
+//延迟线深度上限（按最大的 D 开 RAM）
+#define DC_DELAY_MAX    {DC_DELAY_MAX}
+//诊断通路延迟（点）
+#define DC_DELAY_ECG    {DC_DELAY_ECG}
+//低延迟通路延迟（点）
+#define DC_DELAY_FAST   {DC_DELAY_FAST}
+//通道数 / 每通道并行通路数
+#define N_CHANNELS      {N_CH}
+#define N_PATHS         2
+//每通道每通路的延迟配置，上板可改成 AXI-Lite 寄存器
+static const int DC_DELAY_CFG[N_CHANNELS][N_PATHS] = {{
+    {{ DC_DELAY_ECG,  DC_DELAY_FAST }},   // ch0  心电 导联I
+    {{ DC_DELAY_ECG,  DC_DELAY_FAST }},   // ch1  心电 导联II
+    {{ DC_DELAY_FAST, DC_DELAY_FAST }},   // ch2  扩展位：肌电等闭环场景，两路都走低延迟
+    {{ DC_DELAY_FAST, DC_DELAY_FAST }},   // ch3
+    {{ DC_DELAY_ECG,  DC_DELAY_FAST }},   // ch4  扩展位：按需逐通道改
+    {{ DC_DELAY_ECG,  DC_DELAY_FAST }},   // ch5
+    {{ DC_DELAY_ECG,  DC_DELAY_FAST }},   // ch6
+    {{ DC_DELAY_ECG,  DC_DELAY_FAST }}    // ch7
+}};
+//==========================================================================================================
+// ── ② 50Hz 陷波 biquad，直接 I 型，系数 Q2.{NOTCH_FRAC} ──
+//   acc  = B0*x[n] + B1*x[n-1] + B2*x[n-2] - A1*y[n-1] - A2*y[n-2];
+//   y[n] = acc >> NOTCH_FRAC;
+// 极点半径 {np.sqrt(abs(a_n[2])):.5f}。注入 224uV 工频实测衰减 -61.9 dB
+
+//小数点位置(需要的位移量)
+#define NOTCH_FRAC      {NOTCH_FRAC}
+//位移后的1
+#define NOTCH_ONE       {1 << NOTCH_FRAC}
+//陷波器系数
+#define NOTCH_B0        {b_q[0]}
+#define NOTCH_B1        {b_q[1]}
+#define NOTCH_B2        {b_q[2]}
+#define NOTCH_A1        {a_q[1]}
+#define NOTCH_A2        {a_q[2]}
+//==========================================================================================================
+// ── ③ FIR 低通，系数对称，可折叠成 {int(np.ceil(FIR_TAPS/2))} 个乘法器，系数 Q1.{FIR_FRAC} ──
+//   折叠写法：h[i] * (x[n-i] + x[n-(FIR_TAPS-1-i)])，一个乘法算两项
+
+//FIR 抽头数
+#define FIR_TAPS        {FIR_TAPS}
+//小数点位置(需要的位移量)
+#define FIR_FRAC        {FIR_FRAC}
+//位移后的1
+#define FIR_ONE         {1 << FIR_FRAC}
+// 群延迟 = {hw.fir_group_delay(FIR_TAPS)/FS*1000:.0f} ms，算 RR 间期时被减掉
+#define FIR_DELAY       {hw.fir_group_delay(FIR_TAPS)}
+//响应系数数组
+static const int FIR_COEF[FIR_TAPS] = {{
+''')
+        for i in range(0, FIR_TAPS, 8):
+            chunk = ', '.join(f'{int(v):7d}' for v in h_q[i:i + 8])
+            f.write(f'    {chunk},\n' if i + 8 < FIR_TAPS else f'    {chunk}\n')
+
+        f.write(f'''}};
+
+// ── 数据通路位宽（依据 sim/characterize_notch.py 第 5 节实测峰值）──
+//   输入      24 位有符号（ADS1292 原生输出）
+//   各级中间  24 位有符号足够，实测各级峰值不到 19 位
+//   FIR 累加器 24 + {COEF_BITS} + ceil(log2({FIR_TAPS})) = {acc_bits} 位 → 取 48 位（DSP48 原生累加宽度）
+
+//ads1292输出位宽
+#define DATA_BITS       24
+//累加器位宽
+#define ACC_BITS        48
+
+#endif // ECG_FILTER_COEF_H
+''')
+        
+    print(f'\n已写 {os.path.relpath(hdr, ROOT)}')
+
+
+
+    # ── 参考输出 ──
+    def chain(x):
+        """
+        黄金参考：结构和位宽与 HLS 一致，但算术用双精度。
+        HLS 的定点版本与这条链的差异，就是"算术量化误差"，
+        C 仿真时要报出来并设阈值。
+        
+        排除的是系数移位形成的系数量化误差
+        """
+        y = hw.dc_block_boxcar(x, DC_K_G, DC_BOX_L, DC_DELAY_ECG)                  #矩形窗直流阻断+延迟补偿
+        y = hw.notch_apply(y, b_q / (1 << NOTCH_FRAC), a_q / (1 << NOTCH_FRAC))    #二阶 IIR 陷波器
+        return hw.fir_apply(y, h_q / (1 << FIR_FRAC))                              #低通滤波
+
+    data_dir = os.path.join(ROOT, 'data')                                          #设置路径
+
+
+    def dump(name, arr, fmt):
+        """
+        生成测试向量文件
+        """
+        p = os.path.join(data_dir, name)
+        with open(p, 'w', encoding='ascii', newline='\n') as f:
+            f.writelines(fmt % v + '\n' for v in arr)
+        print(f'  {name:<26} {len(arr):>6} 行')
+
+
+
+
+    # ── 一致性自检：本文件的定稿参数 vs hw_filter_ref.chain_hw_v2 ──
+    # chain_hw_v2 是"理论完整链路"（理想系数 + 双精度），本文件的 chain() 是
+    # "黄金参考"（量化系数 + 双精度）。两者结构相同，只应差系数量化。
+    # 没有这项检查时，任一侧的参数被改动都不会报错 —— 向量会静静地错下去。
+    # 放在 dump 之前：不一致就直接退出，不让坏向量落到磁盘上。
+    import inspect
+    sig = inspect.signature(hw.chain_hw_v2).parameters
+    want = {'k_g': DC_K_G, 'L': DC_BOX_L, 'D': DC_DELAY_ECG,
+            'notch_q': NOTCH_Q, 'n_taps': FIR_TAPS, 'fs': FS}
+    bad = [(k, sig[k].default, v) for k, v in want.items() if sig[k].default != v]
+    if bad:
+        print()
+        print('[失败] chain_hw_v2 的默认参数与本文件不一致：')
+        for k, got, exp in bad:
+            print(f'        {k}:  chain_hw_v2={got}   gen_vectors={exp}')
+        sys.exit(1)
+
+    # 波形比对，抓签名上查不到的改动：级联顺序，以及硬编码在 chain_hw_v2
+    # 里的 NOTCH_F0 / FIR_FC
+    y_chk = chain(raw.astype(np.float64))
+    ideal = hw.chain_hw_v2(raw.astype(np.float64))
+    W = DC_BOX_L + DC_DELAY_MAX + FIR_TAPS            # = ECG_WARMUP = 543，跳过热身
+    dev = float(np.abs(y_chk[W:] - ideal[W:]).max())
+    TOL = 8.0                                         # 实测 1.0 码，留 8 倍余量
+    if dev > TOL:
+        print()
+        print(f'[失败] 黄金参考与理论链路偏差 {dev:.2f} 码，超过阈值 {TOL:.0f}')
+        print('        两者应只差系数量化。检查级联顺序与 NOTCH_F0 / FIR_FC')
+        sys.exit(1)
+    print()
+    print(f'[通过] 黄金参考 vs 理论链路 chain_hw_v2：最大偏差 {dev:.2f} 码'
+          f'（阈值 {TOL:.0f}，纯系数量化）')
+
+    print('\n测试向量：')
+    dump('input_raw.txt', raw, '%d')                                     #原始数据测试向量文件
+    dump('golden_float.txt', chain(raw.astype(np.float64)), '%.6f')      #目标原始数据输出测试向量文件
+
+
+    # 单位冲激：输出应该正好是各级响应的卷积，用来抓"系数装反/装错"
+    imp = np.zeros(1024, dtype=np.float64)                               #生成模拟冲击（长度须大于 ECG_WARMUP=543，否则整段都在热身区）                          
+    imp[8] = 1 << 20                                                     # 放大一点，免得定点下被截断成
+    dump('testcase_impulse.txt', imp.astype(np.int64), '%d')             #模拟冲击测试向量文件
+    dump('testcase_impulse_golden.txt', chain(imp), '%.6f')              #模拟冲击响应测试向量文件
+
+
+    # 纯 50Hz：输出应该被压到接近 0，用来抓陷波器没生效
+    t = np.arange(2000) / FS                                             #生成模拟工频干扰
+    s50 = (1 << 18) * np.sin(2 * np.pi * 50.0 * t)
+    dump('testcase_50hz.txt', np.round(s50).astype(np.int64), '%d')      #模拟工频测试向量文件
+    dump('testcase_50hz_golden.txt', chain(np.round(s50)), '%.6f')       #模拟陷波测试向量文件
+
+    # ── 最后校验 ──
+    y = chain(raw.astype(np.float64))                                   
+    ref = hw.chain_orig_zerophase(raw.astype(np.float64))       #无系数量化误差
+    pk_y, pk_r = hw.find_r_peaks(y), hw.find_r_peaks(ref)       #软件标准滤波
+    LSB_MV = hw.LSB_UV / 1000.0
+
+    #部分指标计算
+    print('\n定稿链路 vs 原版双向零相移（干净实测数据）：')
+    print(f'{"":<22}{"QRS mV":>9}{"心率BPM":>10}{"心拍数":>8}')
+    print(f'{"原版 双向零相移":<22}{hw.qrs_amplitude(ref,pk_r)*LSB_MV:>9.3f}'
+          f'{hw.heart_rate(pk_r):>10.1f}{len(pk_r):>8d}')
+    print(f'{"定稿 硬件链":<22}{hw.qrs_amplitude(y,pk_y)*LSB_MV:>9.3f}'
+          f'{hw.heart_rate(pk_y):>10.1f}{len(pk_y):>8d}')
+    print(f'\n50Hz 纯音测试：输入幅度 {1<<18} 码，'
+          f'输出残留 {hw.tone_amplitude(chain(np.round(s50))[500:], 50.0):.2f} 码')
+
+
+main()

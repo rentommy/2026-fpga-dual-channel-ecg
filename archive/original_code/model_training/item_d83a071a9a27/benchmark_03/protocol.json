@@ -1,0 +1,44 @@
+{
+  "planned_seed0_neural": [
+    "physical_cnn",
+    "physical_rr",
+    "warped_cnn",
+    "warped_rr"
+  ],
+  "classical": "linear SVM on physical morphology + RR",
+  "epochs": 40,
+  "patience": 8,
+  "selection": "highest validation-supported macro-F1 among four CNN configurations, seed0; then repeat selected configuration seeds1/2",
+  "final_test": "only after all validation experiments complete; SVM and three selected CNN seeds plus their probability-average ensemble",
+  "no_test_tuning": true,
+  "supported_labels": [
+    0,
+    2,
+    3,
+    4,
+    5,
+    7,
+    8
+  ],
+  "supplement_before_test": {
+    "method": "RBF SVM",
+    "C": 10,
+    "gamma": "scale",
+    "reason": "nonlinear reference added after low validation scores; final test not evaluated yet",
+    "tuning": "none"
+  },
+  "linear_solver_recovery_before_test": {
+    "original": "LinearSVC dual=auto, max_iter=10000",
+    "recovery": "LinearSVC dual=True, max_iter=10000",
+    "unchanged": [
+      "C=1",
+      "sample weights",
+      "features",
+      "data split"
+    ],
+    "reason": "two primal attempts produced no result and were interrupted; numerical solver replacement before final test",
+    "requirement": "record convergence and do not claim converged if iteration limit reached",
+    "final_iteration_cap": 1000,
+    "note": "dual 10000 also interrupted without result; bounded numerical reference only if convergence warning occurs"
+  }
+}

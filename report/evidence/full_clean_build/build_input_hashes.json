@@ -1,0 +1,158 @@
+[
+  {
+    "path": "src/hls/build_conv.tcl",
+    "sha256": "293eb5fd40f133219e357a61906616d6d9ad7ae1d1e1c98a99510cca2d80c2ef"
+  },
+  {
+    "path": "src/hls/ecg_conv.cpp",
+    "sha256": "403ded2d6999f718644a87dd5e29cc07f3f2226f313acc5c0785b0c4327f1b02"
+  },
+  {
+    "path": "src/hls/ecg_filter.cpp",
+    "sha256": "754abd8daef18c6b5c873c92b66ae5ad7de5a2e2b76268d45a8adb548284d9cb"
+  },
+  {
+    "path": "src/hls/ecg_filter.h",
+    "sha256": "8776ebf7d70072c0e0dccfdce7d6651c52a2cb1009c15ac673de7a7c0ccc977c"
+  },
+  {
+    "path": "src/hls/ecg_filter_coef.h",
+    "sha256": "a0a2d1569eaefa449040914d219dd49839bab7bd7fc9131e1022501cdab065fd"
+  },
+  {
+    "path": "src/hls/ecg_filter_top.cpp",
+    "sha256": "4a87dfc57b48809c9e7c7e75bb553654b01a24fbc8bc8033fa1b5cf39d7290a6"
+  },
+  {
+    "path": "src/hls/hls_export.tcl",
+    "sha256": "2451cdb7997249fe2d2ad5394cdd59fd12b505191d984731d2061c520acd4add"
+  },
+  {
+    "path": "src/hls/hls_fix.tcl",
+    "sha256": "7387ff5b860ff0d31e8a466fe64c6825472bc1545429c6258390d0f78fbe385d"
+  },
+  {
+    "path": "src/hls/run_hls.tcl",
+    "sha256": "c55c87712117eabaff748a9be4e1e7da326eee9da9a4345fdaddad40213ca583"
+  },
+  {
+    "path": "src/hls/tb_ecg_filter.cpp",
+    "sha256": "cc4edca90e302db38ec670e1aa344a87d9fd7454a724afcdd962046b7ba7e242"
+  },
+  {
+    "path": "src/hls/tb_ecg_filter_top.cpp",
+    "sha256": "fcbe41a75089180fec236f787fb9a50c79925ea4e9ae17430921901c1d6ea7e7"
+  },
+  {
+    "path": "src/ps/hw_filter_ref.py",
+    "sha256": "fc96b74bb27a2b59a9d5ca93f16e30af24cf1728e1c362a3fdf40fbfdd401116"
+  },
+  {
+    "path": "src/rtl/ads_spi_engine.sv",
+    "sha256": "a5872630eb39f32a2aedeb78252871b5a79a3a3847ebf12486bcdf3f78117bfd"
+  },
+  {
+    "path": "src/rtl/ecg_io_top.sv",
+    "sha256": "123565e5c14e28e06f27b9819d153cb99bda48e1cd1c6869a4c85dca5c162f4c"
+  },
+  {
+    "path": "src/rtl/ecg_wave_video.sv",
+    "sha256": "0fbaa0aa21b1ab32ca6347676d84020cb010a8202d1d11ed02ccd63e2acd1ab6"
+  },
+  {
+    "path": "board/ads1292_pmoda.xdc",
+    "sha256": "0163a038f20163c4ae9e4123b04a7ecded3dd04011a9f8bf03073b3267d4ff21"
+  },
+  {
+    "path": "board/build_system.tcl",
+    "sha256": "f845b6feb8bcb92eb0682a62352fb4f7a315b572b724711b2082e407ba92aaf3"
+  },
+  {
+    "path": "board/create_overlay.tcl",
+    "sha256": "04ba70036a277bbe569bb3997af4d38d2bc51031b3173b2b415859c0723523bf"
+  },
+  {
+    "path": "board/create_scope.tcl",
+    "sha256": "b10121a0554842a289a11ae397214b8947f7b2f75fef42c41b56d3f0888b0305"
+  },
+  {
+    "path": "board/dual_view.xdc",
+    "sha256": "3e263cde13df8953b29fc3a6ac244980a2982975142bffc2fb6e621810cc74fc"
+  },
+  {
+    "path": "board/scope_hdmi.xdc",
+    "sha256": "e848b77cfafb254d664307315fe9502ac90399657539890a83c8c8d09a3780ca"
+  },
+  {
+    "path": "board/overlay/ecg_system_generated.tcl",
+    "sha256": "861478e4e97d34f56db09269e11d12a1dfbb0e1d4a04119df3bc91fdcfecee56"
+  },
+  {
+    "path": "board/runtime/ecg_model.py",
+    "sha256": "d5513ded4c68891565da8f670053931824d8a69c4e5a8625c4144fc464c24114"
+  },
+  {
+    "path": "board/runtime/hud.py",
+    "sha256": "0b04b4bd0d25f2697fd1bb74c6165c7aefdf0b57a27aa9b7eb09fc8e1a9f45f4"
+  },
+  {
+    "path": "board/runtime/install.py",
+    "sha256": "229bb347f2e48d9a5cb0d017254bae37e0917b93eceb93899fee1bd1ae2a970c"
+  },
+  {
+    "path": "board/runtime/label_layout.py",
+    "sha256": "a449303f0db24deab1640e3bad61ecc1743065527dc751f3933f0df35a9ac8ae"
+  },
+  {
+    "path": "board/runtime/monitoring.py",
+    "sha256": "63b5656c528301a3d5149cf42bc3ff9fbf191c854a9cfd8ef78a2cd4b7381de2"
+  },
+  {
+    "path": "board/runtime/run_inference.py",
+    "sha256": "f06f6d15d587fafffc8cc9e4effcb0533574bf6c3d29e8a66e4ec04f4abed721"
+  },
+  {
+    "path": "board/runtime/scope_runtime.py",
+    "sha256": "1640014127bf0de1a26ec572b5615de96a57e8085c9f6b79fd40392291884f03"
+  },
+  {
+    "path": "board/runtime/session_capture.py",
+    "sha256": "92d77eff560fcd1d89c0510920c6368094c8c2fd7b525a6c8270c63eb99f2544"
+  },
+  {
+    "path": "board/runtime/stream_inference.py",
+    "sha256": "e35534b3e24886e5e920dc5a44087610ed9f739bffc130e41ea628faf4c0ce03"
+  },
+  {
+    "path": "board/runtime/verify_synthetic.py",
+    "sha256": "30c25873be5a6a2526cf4d20fcc82e39e3e6d5625c5ac962fd42bc8ed8b3d837"
+  },
+  {
+    "path": "board/scope/ecg_scope_generated.tcl",
+    "sha256": "d40813bfca5a28f1a76647a0d596088e2a118a5949946e34df215bb33b8222c4"
+  },
+  {
+    "path": "build/audit_release.py",
+    "sha256": "93099c7af9714c899315e205a7b51c64693ca55af8a62af6767e7f659a056c9c"
+  },
+  {
+    "path": "build/build_all.ps1",
+    "sha256": "f6b97431322f58352d4a69491840edb7ce8724055f6c12bab4f866eb7d242b9b"
+  },
+  {
+    "path": "build/prepare_vendor.py",
+    "sha256": "72d58d07bb77da9721dc38db35077d3bad58ddc1fbe33be55628c34c2a7c7e01"
+  },
+  {
+    "path": "build/run_c_tests.ps1",
+    "sha256": "f26747b05c9c5b625f600983b74dee28cdb65e4b9703ca51b984b5740d13f521"
+  },
+  {
+    "path": "skill/overlay_check.py",
+    "sha256": "9f7e1b21e7ae409246e75544303760c21b081ca3bc92a608dd905c175db191b9"
+  },
+  {
+    "path": "skill/report_gate.py",
+    "sha256": "fba5e2de59c4961389af5f99d33b86a478cee75fdb2e58a67408218773a8e27d"
+  }
+]

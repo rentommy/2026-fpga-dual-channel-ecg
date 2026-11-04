@@ -1,0 +1,67 @@
+{
+  "classes": [
+    "A",
+    "F",
+    "L",
+    "N",
+    "R",
+    "V",
+    "|"
+  ],
+  "configs": {
+    "baseline": {
+      "weighted": true
+    },
+    "uniform": {
+      "weighted": false
+    },
+    "balanced": {
+      "weighted": false,
+      "sample": true
+    },
+    "balanced_shift": {
+      "weighted": false,
+      "sample": true,
+      "augment": "shift"
+    },
+    "balanced_scale": {
+      "weighted": false,
+      "sample": true,
+      "augment": "scale"
+    },
+    "balanced_noise": {
+      "weighted": false,
+      "sample": true,
+      "augment": "noise"
+    },
+    "balanced_all": {
+      "weighted": false,
+      "sample": true,
+      "augment": "all"
+    },
+    "morph_only": {
+      "weighted": true,
+      "mode": "morph_only"
+    },
+    "rr_only": {
+      "weighted": true,
+      "mode": "rr_only"
+    },
+    "feature_fusion": {
+      "weighted": true,
+      "mode": "feature_fusion"
+    }
+  },
+  "epochs": 25,
+  "patience": 6,
+  "batch": 256,
+  "learning_rate": 0.001,
+  "weight_decay": 0.01,
+  "sampling": "sqrt class counts, uniform patient conditional on class; replacement; unweighted loss",
+  "augmentation": "shift +/-3 normalized samples; scale .9-1.1; noise sd .02; only training; no extra-feature fusion with augmentation",
+  "features": "10 fixed real-time local descriptive features; energy width is not clinical QRS duration",
+  "selection": "max validation macro-F1 at seed0; repeat baseline and selected seeds1,2 without choosing seed",
+  "source_sha256": "371adb8f6b950917b03e5e124980537a45e40df3a15205da295ff271362d416e",
+  "test": "none; development validation reused; no fresh holdout claim",
+  "budget": "10 seed0 configs then 2 seeds each for baseline and winner"
+}

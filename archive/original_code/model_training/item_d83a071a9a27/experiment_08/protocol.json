@@ -1,0 +1,15 @@
+{
+  "filter": "native fs: butter order3 0.5-40Hz sosfiltfilt -> iirnotch 50Hz Q30 -> tf2sos -> sosfiltfilt",
+  "seeds": [
+    0,
+    1,
+    2
+  ],
+  "model": "multi",
+  "training": "MIT + INCART original training patients",
+  "normalization": "per-beat valid-point mean/std",
+  "comparison": "experiment_07/multi_z_mixed same numbered seeds",
+  "selection": "MIT validation macro-F1, same 30 epochs/patience7",
+  "external_test": "not rerun",
+  "filter_sha256": "2b2b34e15d1a1b02cef5ba91792aa34a32f7198d407d7fe8446c12a635b3c1dc"
+}

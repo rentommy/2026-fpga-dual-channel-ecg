@@ -1,0 +1,53 @@
+{
+  "passed": true,
+  "records": [
+    {
+      "recording": "electrode_cn2_20261104",
+      "measurement": {
+        "quality": {
+          "state": "GOOD",
+          "reason": "GOOD",
+          "span_mv": 1.0656619573880177,
+          "raw_span_mv": 1.2523060185479353,
+          "clipped_fraction": 0.0,
+          "mains_fraction": 0.415977507439065,
+          "high_frequency_fraction": 0.4237652574538639,
+          "baseline_fraction": 0.08505413326888343
+        },
+        "bpm": 63.20987654320987,
+        "rr_seconds": [
+          0.90625,
+          0.9609375,
+          0.97265625,
+          0.94921875,
+          0.9140625
+        ],
+        "last_peak_age_seconds": 1.765625
+      }
+    },
+    {
+      "recording": "electrode_cn4_rld1_20261104",
+      "measurement": {
+        "quality": {
+          "state": "GOOD",
+          "reason": "GOOD",
+          "span_mv": 0.9858279549891658,
+          "raw_span_mv": 1.1477541781768201,
+          "clipped_fraction": 0.0,
+          "mains_fraction": 0.02122312898273771,
+          "high_frequency_fraction": 0.045802568770794055,
+          "baseline_fraction": 0.0893479108986271
+        },
+        "bpm": 74.5631067961165,
+        "rr_seconds": [
+          0.76171875,
+          0.8046875,
+          0.79296875,
+          0.84375,
+          0.890625
+        ],
+        "last_peak_age_seconds": 1.43359375
+      }
+    }
+  ]
+}

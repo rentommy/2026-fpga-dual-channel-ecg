@@ -1,0 +1,20 @@
+{
+  "arms": [
+    "two_db",
+    "six_db"
+  ],
+  "seeds": [
+    0,
+    1,
+    2
+  ],
+  "selection": "frozen multi-source validation subset max2000/source/class; eight-class macro-F1, same subset for both arms",
+  "same_architecture": "multi-scale residual + RR, 8 outputs",
+  "round_draws": 180000,
+  "sampling": "uniform shuffled full pass with cyclic carry; every training sample visited before stopping",
+  "max_rounds": 24,
+  "patience": 6,
+  "comparison": "same eight outputs, optimizer and number of draws per round; not old seven-output weights",
+  "filter": "retain user 50Hz Q30 notch plus bidirectional .5-40Hz bandpass",
+  "test": "frozen until training all arms/seeds complete; old test cohorts already used historically, not pristine external evidence"
+}

@@ -26,7 +26,7 @@ foreach a $argv {
         cosim   { set DO_COSIM 1 }
         export  { set DO_EXPORT 1 }
         all     { set DO_COSIM 1; set DO_EXPORT 1 }
-        default { puts "未知参数: $a（可用 cosim / export / all）"; exit 1 }
+        default { puts "未知参数: $a（可用 cosim / export / all）" }
     }
 }
 

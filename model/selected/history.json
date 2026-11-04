@@ -1,0 +1,212 @@
+[
+  {
+    "round": 1,
+    "loss": 0.56649434087144,
+    "accuracy": 0.6518337408312959,
+    "macro_f1": 0.33544626957110585,
+    "mit_accuracy": 0.6992462803445576,
+    "mit_common7_macro_f1": 0.3249346734756931,
+    "seconds": 9.979224443435669,
+    "unique_training_seen": 180000
+  },
+  {
+    "round": 2,
+    "loss": 0.2685816094358762,
+    "accuracy": 0.6726650366748166,
+    "macro_f1": 0.38050830939623315,
+    "mit_accuracy": 0.6999314800313234,
+    "mit_common7_macro_f1": 0.37098705940390125,
+    "seconds": 9.748745203018188,
+    "unique_training_seen": 360000
+  },
+  {
+    "round": 3,
+    "loss": 0.20905880094832843,
+    "accuracy": 0.6561369193154034,
+    "macro_f1": 0.3740205109691609,
+    "mit_accuracy": 0.6934710258418167,
+    "mit_common7_macro_f1": 0.38843984511467144,
+    "seconds": 9.715561389923096,
+    "unique_training_seen": 540000
+  },
+  {
+    "round": 4,
+    "loss": 0.18611308098369175,
+    "accuracy": 0.6704645476772616,
+    "macro_f1": 0.38279236001543676,
+    "mit_accuracy": 0.6998335943617854,
+    "mit_common7_macro_f1": 0.3781970527628262,
+    "seconds": 9.594777822494507,
+    "unique_training_seen": 720000
+  },
+  {
+    "round": 5,
+    "loss": 0.18189703829354711,
+    "accuracy": 0.6790709046454768,
+    "macro_f1": 0.3897805189952648,
+    "mit_accuracy": 0.7004698512137824,
+    "mit_common7_macro_f1": 0.3730060087239733,
+    "seconds": 9.563549995422363,
+    "unique_training_seen": 900000
+  },
+  {
+    "round": 6,
+    "loss": 0.16206968415313297,
+    "accuracy": 0.6765281173594132,
+    "macro_f1": 0.366670111970242,
+    "mit_accuracy": 0.6692443226311668,
+    "mit_common7_macro_f1": 0.3543343480827321,
+    "seconds": 9.433665037155151,
+    "unique_training_seen": 1080000
+  },
+  {
+    "round": 7,
+    "loss": 0.1543593440249562,
+    "accuracy": 0.6796088019559903,
+    "macro_f1": 0.38845263757833937,
+    "mit_accuracy": 0.702182850430697,
+    "mit_common7_macro_f1": 0.3721107694845606,
+    "seconds": 9.459645509719849,
+    "unique_training_seen": 1260000
+  },
+  {
+    "round": 8,
+    "loss": 0.1462474252704117,
+    "accuracy": 0.6666992665036675,
+    "macro_f1": 0.4147794620281632,
+    "mit_accuracy": 0.6999314800313234,
+    "mit_common7_macro_f1": 0.3886756888943928,
+    "seconds": 9.472501754760742,
+    "unique_training_seen": 1398873
+  },
+  {
+    "round": 9,
+    "loss": 0.14497588043610254,
+    "accuracy": 0.6734474327628361,
+    "macro_f1": 0.41615720165215064,
+    "mit_accuracy": 0.7046299921691465,
+    "mit_common7_macro_f1": 0.36785190360678927,
+    "seconds": 9.42470407485962,
+    "unique_training_seen": 1398873
+  },
+  {
+    "round": 10,
+    "loss": 0.14236241405043337,
+    "accuracy": 0.6755012224938876,
+    "macro_f1": 0.41725998650913465,
+    "mit_accuracy": 0.7046299921691465,
+    "mit_common7_macro_f1": 0.381825166490606,
+    "seconds": 9.448511123657227,
+    "unique_training_seen": 1398873
+  },
+  {
+    "round": 11,
+    "loss": 0.13828580576661562,
+    "accuracy": 0.6669926650366749,
+    "macro_f1": 0.4232080720015811,
+    "mit_accuracy": 0.6915133124510572,
+    "mit_common7_macro_f1": 0.3560665334242727,
+    "seconds": 9.453258037567139,
+    "unique_training_seen": 1398873
+  },
+  {
+    "round": 12,
+    "loss": 0.13429613804684745,
+    "accuracy": 0.6708557457212714,
+    "macro_f1": 0.4276650153626009,
+    "mit_accuracy": 0.7105031323414253,
+    "mit_common7_macro_f1": 0.3655788009753465,
+    "seconds": 9.467431783676147,
+    "unique_training_seen": 1398873
+  },
+  {
+    "round": 13,
+    "loss": 0.1271943405283822,
+    "accuracy": 0.6752567237163815,
+    "macro_f1": 0.42777050083916524,
+    "mit_accuracy": 0.7059514487079092,
+    "mit_common7_macro_f1": 0.3824283279692252,
+    "seconds": 9.462720394134521,
+    "unique_training_seen": 1398873
+  },
+  {
+    "round": 14,
+    "loss": 0.12356299908690982,
+    "accuracy": 0.6776039119804401,
+    "macro_f1": 0.4227087790091913,
+    "mit_accuracy": 0.7004209083790133,
+    "mit_common7_macro_f1": 0.3794297621795259,
+    "seconds": 9.459099054336548,
+    "unique_training_seen": 1398873
+  },
+  {
+    "round": 15,
+    "loss": 0.12657535479068757,
+    "accuracy": 0.6807823960880196,
+    "macro_f1": 0.44598676017443006,
+    "mit_accuracy": 0.7041405638214565,
+    "mit_common7_macro_f1": 0.39309302024612197,
+    "seconds": 9.484941005706787,
+    "unique_training_seen": 1398873
+  },
+  {
+    "round": 16,
+    "loss": 0.11962096556425095,
+    "accuracy": 0.68,
+    "macro_f1": 0.43900063669759765,
+    "mit_accuracy": 0.6947924823805794,
+    "mit_common7_macro_f1": 0.38753698295045286,
+    "seconds": 9.521857976913452,
+    "unique_training_seen": 1398873
+  },
+  {
+    "round": 17,
+    "loss": 0.11134517379071977,
+    "accuracy": 0.6664547677261614,
+    "macro_f1": 0.3988239893418098,
+    "mit_accuracy": 0.7088390759592795,
+    "mit_common7_macro_f1": 0.3901245819105358,
+    "seconds": 9.465381383895874,
+    "unique_training_seen": 1398873
+  },
+  {
+    "round": 18,
+    "loss": 0.11576764609979259,
+    "accuracy": 0.6795110024449877,
+    "macro_f1": 0.4367753618819867,
+    "mit_accuracy": 0.7061472200469852,
+    "mit_common7_macro_f1": 0.3894546653941479,
+    "seconds": 9.448418617248535,
+    "unique_training_seen": 1398873
+  },
+  {
+    "round": 19,
+    "loss": 0.11255673565732108,
+    "accuracy": 0.6834229828850856,
+    "macro_f1": 0.4185464334770683,
+    "mit_accuracy": 0.7090348472983555,
+    "mit_common7_macro_f1": 0.3462270203327246,
+    "seconds": 9.370612144470215,
+    "unique_training_seen": 1398873
+  },
+  {
+    "round": 20,
+    "loss": 0.10947919283045662,
+    "accuracy": 0.6689975550122249,
+    "macro_f1": 0.3989522769635766,
+    "mit_accuracy": 0.6953308535630384,
+    "mit_common7_macro_f1": 0.38927459204720155,
+    "seconds": 9.39671778678894,
+    "unique_training_seen": 1398873
+  },
+  {
+    "round": 21,
+    "loss": 0.10484153879615996,
+    "accuracy": 0.6630317848410758,
+    "macro_f1": 0.4280869463580722,
+    "mit_accuracy": 0.7029169929522318,
+    "mit_common7_macro_f1": 0.38620950902948287,
+    "seconds": 9.435729503631592,
+    "unique_training_seen": 1398873
+  }
+]

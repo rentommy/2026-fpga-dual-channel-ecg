@@ -1,0 +1,54 @@
+{
+  "arm": "two_db",
+  "seed": 0,
+  "classes": [
+    "A",
+    "F",
+    "L",
+    "N",
+    "R",
+    "S",
+    "V",
+    "|"
+  ],
+  "rr_mean": [
+    -0.3167206048965454,
+    -0.31605860590934753,
+    1.0036033391952515,
+    1.0069372653961182,
+    -0.303343266248703,
+    1.052286982536316,
+    -0.3035116195678711,
+    -0.3155156970024109
+  ],
+  "rr_std": [
+    0.28931495547294617,
+    0.2894531488418579,
+    0.1830126792192459,
+    0.20040719211101532,
+    0.231739804148674,
+    0.3563273847103119,
+    0.24038927257061005,
+    0.2887570858001709
+  ],
+  "train_counts": [
+    2633,
+    904,
+    4491,
+    135196,
+    3424,
+    11,
+    16978,
+    87
+  ],
+  "train_n": 163724,
+  "validation": "fixed multi-source validation subset, at most2000 per source/class; select eight-class macro-F1; report full MIT separately",
+  "selection_indices_sha256": "7faa5e250d77a8386a49219342e1a6faaa49ce12d4ad68539e2818924d7f6556",
+  "round_draws": 180000,
+  "max_rounds": 24,
+  "patience": 6,
+  "batch": 256,
+  "minimum_rounds_for_full_coverage": 1,
+  "manifest_sha256": "166315cc95178269154172a42193e5b49f8af39a86952bc1d5e0a845456d3a21",
+  "code_sha256": "2477c65eda616821f3141d0b5934657b69b0d6601c803b61b2b580a0827400d3"
+}
